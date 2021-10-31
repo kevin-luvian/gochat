@@ -8,13 +8,10 @@ import (
 )
 
 func main() {
-	// mdef.Test()
+	logrus.Info("Starting Server...")
 
 	db.MYSQL.Connect()
-	// db.MYSQL.DropCreateTables([]interface{}{model.User{}})
 	db.MYSQL.CreateTables(model.User{})
-
-	logrus.Info("server started")
 
 	// router := router.MakeMyRouter()
 	// router.Handle("/check", &check.Routes)
