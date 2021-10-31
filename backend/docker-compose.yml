@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  mdb:
+    # restart: unless-stopped
+    image: "mysql:latest"
+    container_name: "go_mysql"
+    volumes:
+      - /var/lib/mysql/
+    ports:
+      - 5444:3306
+    environment:
+      MYSQL_DATABASE: gomysql
+      MYSQL_USER: gouser
+      MYSQL_PASSWORD: gopassword
+      MYSQL_ROOT_PASSWORD: gopassword
+  mtdb:
+    image: "mysql:latest"
+    container_name: "go_mysql_test"
+    ports:
+      - 3301:3306
+    environment:
+      MYSQL_DATABASE: gomysqltest
+      MYSQL_USER: gouser
+      MYSQL_PASSWORD: gopassword
+      MYSQL_ROOT_PASSWORD: gopassword
