@@ -35,7 +35,7 @@ func MakeDefaultSQLDB() SQLDB {
 	return SQLDB{
 		driver:   "mysql",
 		host:     "localhost",
-		port:     5444,
+		port:     3300,
 		user:     "gouser",
 		password: "gopassword",
 		dbname:   "gomysql"}
