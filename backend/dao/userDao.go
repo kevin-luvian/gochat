@@ -75,16 +75,10 @@ func (dao *UserDAO) UpdateById(id int64, user model.User) (bool, model.User) {
 	qchain := query.MakeUpdateQueryChain(user).
 		SetModel(user).
 		WhereKey("id", id)
-	logrus.Warn(qchain.ToString(), " ", qchain.GetValues())
 	if raff, err := sql.UpdateRowQuery(dao.db, qchain.ToString(), qchain.GetValues()); err != nil {
 		return false, user
 	} else if raff != 1 {
 		return false, user
 	}
-
-	if ok, updatedUser := dao.FindById(id); !ok {
-		return false, user
-	} else {
-		return true, updatedUser
-	}
+	return dao.FindById(id)
 }
