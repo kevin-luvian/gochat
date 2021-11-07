@@ -1,9 +1,9 @@
 build:
-	go build -o server main.go
+	go build -o bin/server main.go
 
 run: build
-	./server
+	./bin/server
 
 watch:
-	ulimit -n 1000 #increase the file watch limit, might required on MacOS
+	ulimit -n 1000
 	reflex -s -r '\.go$$' make run
