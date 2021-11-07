@@ -90,22 +90,22 @@ func (f *fieldMetadata) getSQLType() string {
 
 func (f *fieldMetadata) getValueType() string {
 	switch f.value.(type) {
-	case int:
+	case int, int64:
 		return "INT"
 	case int16:
 		return "MEDIUMINT"
 	case string:
 		return "varchar(255)"
 	default:
-		logrus.Panic("Type Not Supported", reflect.TypeOf(f.value))
+		logrus.Panic("Type Not Supported ", reflect.TypeOf(f.value))
 		return ""
 	}
 }
 
 func (f *fieldMetadata) getTagConstraints() string {
-	result := ""
-	for _, tag := range f.tags {
-		tval := strings.Split(tag, "-")
+	tags := make([]string, len(f.tags))
+	for i := range f.tags {
+		tval := strings.Split(f.tags[i], "-")
 		tg := tagDef[tval[0]]
 
 		switch tval[0] {
@@ -117,7 +117,7 @@ func (f *fieldMetadata) getTagConstraints() string {
 			tg += " " + tval[1]
 		}
 
-		result += tg
+		tags[i] = tg
 	}
-	return result
+	return strings.Join(tags, " ")
 }

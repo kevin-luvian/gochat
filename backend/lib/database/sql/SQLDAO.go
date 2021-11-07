@@ -75,7 +75,6 @@ func DeleteRowQuery(db *sql.DB, qstr string, qvals []interface{}) (int64, error)
 }
 
 func execRowQuery(db *sql.DB, qstr string, qvals []interface{}) (int64, error) {
-	logrus.Warn(qstr, " , ", qvals)
 	qresult, err := db.Exec(qstr, qvals...)
 	if err != nil {
 		logrus.Panic("UNKNOWN ERROR OCCURED", err)

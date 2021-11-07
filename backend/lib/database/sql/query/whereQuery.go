@@ -33,7 +33,7 @@ func (w *whereQuery) where(wstr string, vals []interface{}) {
 
 func (w *whereQuery) whereKey(k string, v interface{}) {
 	w.wheres = k + " = ?"
-	w.wherevals = []interface{}{util.AnyToStringQuery(v)}
+	w.wherevals = []interface{}{v}
 }
 
 func (w *whereQuery) whereModel(o interface{}, fields []string) {
