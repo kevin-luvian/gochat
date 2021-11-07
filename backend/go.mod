@@ -8,5 +8,6 @@ require (
 	github.com/lib/pq v1.10.3
 	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.5.1
+	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
 	google.golang.org/genproto v0.0.0-20211021150943-2b146023228c
 )

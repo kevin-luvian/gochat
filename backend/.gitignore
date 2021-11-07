@@ -3,6 +3,9 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=go
 
 ### Go ###
+# files
+server
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
