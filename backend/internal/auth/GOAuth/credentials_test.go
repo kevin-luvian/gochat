@@ -3,13 +3,25 @@ package GOAuth
 import (
 	"log"
 	"testing"
+
+	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 )
 
-func TestCheckCredentialsData(t *testing.T) {
-	log.Println("My Creds ID: ", MyCredentials.Cid)
-	log.Println("My Creds Secret: ", MyCredentials.Csecret)
+func init() {
+	logrus.Info("Starting credentials test")
+	err := godotenv.Load("../../../.env")
 
-	log.Println("Google OAuth Config: ", GOAuthConf)
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+}
+
+func TestCheckCredentialsData(t *testing.T) {
+	log.Println("My Creds ID: ", GetGOAuthConf().ClientID)
+	log.Println("My Creds Secret: ", GetGOAuthConf().ClientSecret)
+
+	log.Println("Google OAuth Config: ", GetGOAuthConf())
 }
 
 func TestCheckLoginCredential(t *testing.T) {

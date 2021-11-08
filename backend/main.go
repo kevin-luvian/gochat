@@ -7,9 +7,21 @@ import (
 	"gochat/internal/sample"
 	"gochat/model"
 	"gochat/router"
+	"log"
+	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 )
+
+func init() {
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	logrus.Info("ENV: ", os.Getenv("ENV"))
+}
 
 func main() {
 	logrus.Info("Starting Server...")

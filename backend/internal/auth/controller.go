@@ -34,14 +34,14 @@ func authGoogle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Handle the exchange code to initiate a transport.
-	tok, err := GOAuth.GOAuthConf.Exchange(context.Background(), code)
+	tok, err := GOAuth.GetGOAuthConf().Exchange(context.Background(), code)
 	if err != nil {
 		helper.FailedJSON(w, http.StatusBadRequest, "failed to make exchange", nil)
 	}
 	logrus.Info("Token ", tok)
 
 	// Construct the client.
-	client := GOAuth.GOAuthConf.Client(context.Background(), tok)
+	client := GOAuth.GetGOAuthConf().Client(context.Background(), tok)
 	resp, err := client.Get("https://www.googleapis.com/oauth2/v3/userinfo")
 	if err != nil {
 		helper.FailedJSON(w, http.StatusBadRequest, "failed to get client", nil)
