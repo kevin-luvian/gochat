@@ -6,6 +6,7 @@ require (
 	github.com/cespare/reflex v0.3.1 // indirect
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/gomodule/redigo v2.0.0+incompatible
+	github.com/google/uuid v1.1.2
 	github.com/joho/godotenv v1.4.0
 	github.com/lib/pq v1.10.3
 	github.com/sirupsen/logrus v1.8.1

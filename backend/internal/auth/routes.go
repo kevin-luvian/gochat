@@ -9,6 +9,11 @@ var Routes = router.Routes{
 		Handler: temp,
 	},
 	router.Route{
+		Uri:     "/login/google",
+		Method:  router.GET,
+		Handler: loginGoogle,
+	},
+	router.Route{
 		Uri:     "/google",
 		Method:  router.GET,
 		Handler: authGoogle,

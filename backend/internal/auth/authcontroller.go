@@ -2,17 +2,23 @@ package auth
 
 import (
 	"context"
+	"encoding/json"
+	"gochat/database"
 	"gochat/helper"
+	"gochat/helper/util"
 	"gochat/internal/auth/GOAuth"
 	"io/ioutil"
-	"log"
 	"net/http"
-
-	"github.com/sirupsen/logrus"
 )
 
 func temp(w http.ResponseWriter, r *http.Request) {
 	helper.SuccessJSON(w, "healthy", "empty")
+}
+
+func loginGoogle(w http.ResponseWriter, r *http.Request) {
+	state, url := GOAuth.MakeLoginURLCredential()
+	database.GetRedis().SETEX(state, util.SecHour(1), "")
+	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
 func authGoogle(w http.ResponseWriter, r *http.Request) {
@@ -20,8 +26,7 @@ func authGoogle(w http.ResponseWriter, r *http.Request) {
 	state := query.Get("state")
 	code := query.Get("code")
 
-	isStateExist := true
-	if !isStateExist {
+	if !database.GetRedis().EXIST(state) {
 		helper.FailedJSON(w, http.StatusBadRequest, "state is not valid", nil)
 		return
 	}
@@ -29,21 +34,24 @@ func authGoogle(w http.ResponseWriter, r *http.Request) {
 	// Handle the exchange code to initiate a transport.
 	tok, err := GOAuth.GetGOAuthConf().Exchange(context.Background(), code)
 	if err != nil {
-		helper.FailedJSON(w, http.StatusBadRequest, "failed to make exchange", nil)
+		helper.FailedJSON(w, http.StatusBadRequest, "failed to token make exchange", nil)
+		return
 	}
-	logrus.Info("Token ", tok)
 
 	// Construct the client.
 	client := GOAuth.GetGOAuthConf().Client(context.Background(), tok)
 	resp, err := client.Get("https://www.googleapis.com/oauth2/v3/userinfo")
 	if err != nil {
 		helper.FailedJSON(w, http.StatusBadRequest, "failed to get client", nil)
+		return
 	}
-	defer resp.Body.Close()
-	data, _ := ioutil.ReadAll(resp.Body)
-	log.Println("Resp body: ", string(data))
 
-	helper.SuccessJSON(w, state, struct {
-		State string `json:"state"`
-	}{state})
+	data, _ := ioutil.ReadAll(resp.Body)
+	defer resp.Body.Close()
+
+	m := make(map[string]string)
+	json.Unmarshal(data, &m)
+	m["state"] = state
+
+	helper.SuccessJSON(w, "login using gmail success", m)
 }
