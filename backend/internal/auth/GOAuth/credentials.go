@@ -1,16 +1,13 @@
 package GOAuth
 
 import (
-	"gochat/dao"
-	"gochat/database"
+	"gochat/helper/util"
 	"os"
 	"sync"
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )
-
-var authStateDAO dao.AuthStateDAO
 
 var once sync.Once
 
@@ -36,11 +33,8 @@ func makeGOAuthConf() {
 	}
 }
 
-func init() {
-	authStateDAO = dao.MakeAuthStateDAO(database.MYSQLDB.GetDatabase())
-}
-
 func MakeLoginURLCredential() (string, string) {
-	_, state := authStateDAO.Create()
+	// TODO: save state to storage
+	state := util.RandString(30)
 	return state, GetGOAuthConf().AuthCodeURL(state)
 }

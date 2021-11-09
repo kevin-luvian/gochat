@@ -1,7 +1,7 @@
 package main
 
 import (
-	db "gochat/database"
+	"gochat/database"
 	"gochat/internal/auth"
 	"gochat/internal/check"
 	"gochat/internal/sample"
@@ -26,7 +26,8 @@ func init() {
 func main() {
 	logrus.Info("Starting Server...")
 
-	db.MYSQLDB.CreateTables(model.User{}, model.AuthState{})
+	db := database.GetMYSQLDB()
+	db.CreateTables(model.User{})
 
 	router := router.MakeMyRouter()
 	router.Handle("/check", &check.Routes)

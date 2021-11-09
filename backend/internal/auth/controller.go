@@ -2,8 +2,6 @@ package auth
 
 import (
 	"context"
-	"gochat/dao"
-	"gochat/database"
 	"gochat/helper"
 	"gochat/internal/auth/GOAuth"
 	"io/ioutil"
@@ -12,12 +10,6 @@ import (
 
 	"github.com/sirupsen/logrus"
 )
-
-var authStateDAO dao.AuthStateDAO
-
-func init() {
-	authStateDAO = dao.MakeAuthStateDAO(database.MYSQLDB.GetDatabase())
-}
 
 func temp(w http.ResponseWriter, r *http.Request) {
 	helper.SuccessJSON(w, "healthy", "empty")
@@ -28,7 +20,8 @@ func authGoogle(w http.ResponseWriter, r *http.Request) {
 	state := query.Get("state")
 	code := query.Get("code")
 
-	if !authStateDAO.Exist(state) {
+	isStateExist := true
+	if !isStateExist {
 		helper.FailedJSON(w, http.StatusBadRequest, "state is not valid", nil)
 		return
 	}
