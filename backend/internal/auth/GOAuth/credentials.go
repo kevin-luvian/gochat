@@ -34,7 +34,7 @@ func makeGOAuthConf() {
 }
 
 func MakeLoginURLCredential() (string, string) {
-	// TODO: save state to storage
-	state := util.RandString(30)
+	credid := "GoogleAuthCredential_"
+	state := credid + util.MakeUUIDNoDash()
 	return state, GetGOAuthConf().AuthCodeURL(state)
 }
