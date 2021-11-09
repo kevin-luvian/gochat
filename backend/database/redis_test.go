@@ -1,20 +1,16 @@
 package database
 
 import (
+	"gochat/env"
 	"gochat/lib/database/redis"
 	"testing"
+	"time"
 
-	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 )
 
 func init() {
-	logrus.Info("Starting userDao test")
-	err := godotenv.Load("../.env")
-
-	if err != nil {
-		logrus.Fatal("Error loading .env file")
-	}
+	env.LoadDotEnvForTest()
 }
 
 func makeTestRedisDB() *redis.Redis {
@@ -46,13 +42,13 @@ func TestRedisGetSet(t *testing.T) {
 	}
 
 	if ok, _ = redisdb.GET("somekey"); ok {
-		t.Fatalf(`non existent key found`)
+		t.Fatalf(`non existent key found using get`)
 	} else {
-		logrus.Info("non existent key not found")
+		logrus.Info("non existent key not found using get")
 	}
 }
 
-func TestRedisUnique(t *testing.T) {
+func TestExist(t *testing.T) {
 	redisdb := makeTestRedisDB()
 
 	key := "state"
@@ -71,5 +67,48 @@ func TestRedisUnique(t *testing.T) {
 		t.Fatalf(`non existent key found`)
 	} else {
 		logrus.Info("non existent key not found")
+	}
+}
+
+func TestDelete(t *testing.T) {
+	redisdb := makeTestRedisDB()
+
+	key := "state"
+	value := "value"
+
+	redisdb.SET(key, value)
+	logrus.Info("set redis key")
+
+	redisdb.DEL(key)
+	logrus.Info("key deleted")
+
+	if exist := redisdb.EXIST(key); exist {
+		t.Fatalf(`key still exist`)
+	} else {
+		logrus.Info("key not found")
+	}
+}
+
+func TestSetFor(t *testing.T) {
+	redisdb := makeTestRedisDB()
+
+	key := "state"
+	value := "value"
+
+	redisdb.SETEX(key, 1, value)
+	logrus.Info("set redis key for 1 second")
+
+	time.Sleep(time.Second / 2)
+	if exist := redisdb.EXIST(key); !exist {
+		t.Fatalf(`key not found`)
+	} else {
+		logrus.Info("key found")
+	}
+
+	time.Sleep(time.Second / 2)
+	if exist := redisdb.EXIST(key); exist {
+		t.Fatalf(`key still exist`)
+	} else {
+		logrus.Info("key not found")
 	}
 }

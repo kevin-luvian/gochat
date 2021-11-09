@@ -40,11 +40,31 @@ func (r *Redis) FLUSH() {
 	}
 }
 
+func (r *Redis) DEL(key string) {
+	conn := r.pool.Get()
+	defer conn.Close()
+
+	_, err := conn.Do("DEL", key)
+	if err != nil {
+		logrus.Panic("Cant del redis. ", err.Error())
+	}
+}
+
 func (r *Redis) SET(key string, val string) {
 	conn := r.pool.Get()
 	defer conn.Close()
 
 	_, err := conn.Do("SET", key, val)
+	if err != nil {
+		logrus.Panic("Cant set redis. ", err.Error())
+	}
+}
+
+func (r *Redis) SETEX(key string, exp int, val string) {
+	conn := r.pool.Get()
+	defer conn.Close()
+
+	_, err := conn.Do("SETEX", key, exp, val)
 	if err != nil {
 		logrus.Panic("Cant set redis. ", err.Error())
 	}
