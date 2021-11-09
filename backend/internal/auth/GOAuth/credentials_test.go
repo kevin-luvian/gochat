@@ -1,20 +1,15 @@
 package GOAuth
 
 import (
+	"gochat/database"
+	"gochat/env"
 	"log"
 	"testing"
-
-	"github.com/joho/godotenv"
-	"github.com/sirupsen/logrus"
 )
 
 func init() {
-	logrus.Info("Starting credentials test")
-	err := godotenv.Load("../../../.env")
-
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	env.LoadDotEnvForTest()
+	database.GetRedis().FLUSH()
 }
 
 func TestCheckCredentialsData(t *testing.T) {
