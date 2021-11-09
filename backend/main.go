@@ -2,24 +2,19 @@ package main
 
 import (
 	"gochat/database"
+	"gochat/env"
 	"gochat/internal/auth"
 	"gochat/internal/check"
 	"gochat/internal/sample"
 	"gochat/model"
 	"gochat/router"
-	"log"
 	"os"
 
-	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 )
 
 func init() {
-	err := godotenv.Load(".env")
-
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	env.LoadMainDotEnv()
 	logrus.Info("ENV: ", os.Getenv("ENV"))
 }
 

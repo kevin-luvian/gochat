@@ -3,20 +3,15 @@ package dao
 import (
 	libsql "database/sql"
 	"gochat/database"
+	"gochat/env"
 	"gochat/model"
 	"testing"
 
-	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 )
 
 func init() {
-	logrus.Info("Starting userDao test")
-	err := godotenv.Load("../.env")
-
-	if err != nil {
-		logrus.Fatal("Error loading .env file")
-	}
+	env.LoadDotEnvForTest()
 }
 
 func makeTestUserDB(t *testing.T) *libsql.DB {
