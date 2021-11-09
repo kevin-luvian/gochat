@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"gochat/lib/database/sql/query"
+	"strconv"
 	"strings"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -21,38 +22,22 @@ type SQLDB struct {
 	database *sql.DB
 }
 
-func MakeTestSQLDB() SQLDB {
-	return SQLDB{
-		driver:   "mysql",
-		host:     "localhost",
-		port:     3301,
-		user:     "gouser",
-		password: "gopassword",
-		dbname:   "gomysqltest"}
-}
-
-func MakeDefaultSQLDB() SQLDB {
-	return SQLDB{
-		driver:   "mysql",
-		host:     "localhost",
-		port:     3300,
-		user:     "gouser",
-		password: "gopassword",
-		dbname:   "gomysql"}
-}
-
 func MakeSQLDB(
 	driver string,
 	host string,
-	port int,
+	port string,
 	user string,
 	password string,
 	dbname string,
 ) SQLDB {
+	iport, err := strconv.Atoi(port)
+	if err != nil {
+		logrus.Panic("Port must be an integer")
+	}
 	return SQLDB{
 		driver:   driver,
 		host:     host,
-		port:     port,
+		port:     iport,
 		user:     user,
 		password: password,
 		dbname:   dbname}
@@ -64,6 +49,13 @@ func (s *SQLDB) getInfoString() string {
 
 func (s *SQLDB) GetDatabase() *sql.DB {
 	return s.database
+}
+
+func (s *SQLDB) Ping() bool {
+	if err := s.database.Ping(); err != nil {
+		return false
+	}
+	return true
 }
 
 func (s *SQLDB) Connect() {
@@ -78,6 +70,14 @@ func (s *SQLDB) Connect() {
 	}
 
 	logrus.Info(s.driver, " db connected!")
+}
+
+func (s *SQLDB) Close() {
+	if err := s.database.Close(); err != nil {
+		logrus.Panic("Cant close connection ", err)
+	}
+
+	logrus.Info(s.driver, " db closed!")
 }
 
 func (s *SQLDB) DropCreateTables(models ...interface{}) {
@@ -102,7 +102,7 @@ func (s *SQLDB) createTable(o interface{}) {
 	q := query.MakeCreateTableQuery(o)
 	if _, err := s.database.Exec(q); err != nil {
 		switch {
-		case strings.Contains(err.Error(), "already exists"):
+		case strings.Contains(strings.ToLower(err.Error()), "already exists"):
 			logrus.Warn("CREATE TABLE FAILED: table ",
 				mmeta.Tablename, " already exists in database")
 		default:
