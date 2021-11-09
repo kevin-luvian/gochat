@@ -1,0 +1,10 @@
+FROM mysql:latest
+
+ENV MYSQL_DATABASE gomysql
+ENV MYSQL_USER gouser
+ENV MYSQL_PASSWORD gopassword
+ENV MYSQL_ROOT_PASSWORD gopassword
+
+VOLUME /vol/mysql/ 
+
+EXPOSE 3306
