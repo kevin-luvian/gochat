@@ -1,26 +1,24 @@
 package query
 
 import (
-	"gochat/lib/database/sql/query/metadata"
-	"gochat/lib/database/sql/query/where"
 	"strings"
 )
 
-func MakeSelectQuery(o interface{}) SelectQuery {
-	return SelectQuery{
-		tablename:  metadata.GetModelTablename(o),
+func MakeSelectQueryChain(o interface{}) SelectQueryChain {
+	return SelectQueryChain{
+		tablename:  getModelTablename(o),
 		fieldnames: []string{},
-		qwhere:     where.MakeWhereQuery(),
+		qwhere:     makeWhereQuery(),
 	}
 }
 
-type SelectQuery struct {
+type SelectQueryChain struct {
 	tablename  string
 	fieldnames []string
-	qwhere     where.WhereQuery
+	qwhere     whereQuery
 }
 
-func (iqc *SelectQuery) ToString() string {
+func (iqc *SelectQueryChain) ToString() string {
 	b := strings.Builder{}
 	b.WriteString("SELECT ")
 	if len(iqc.fieldnames) == 0 {
@@ -30,33 +28,33 @@ func (iqc *SelectQuery) ToString() string {
 	}
 	b.WriteString(" FROM ")
 	b.WriteString(iqc.tablename)
-	if where.HasAny(&iqc.qwhere) {
+	if iqc.qwhere.hasAny() {
 		b.WriteString(" WHERE ")
-		b.WriteString(iqc.qwhere.GetWheresString())
+		b.WriteString(iqc.qwhere.wheres)
 	}
 	return b.String()
 }
 
-func (sqc *SelectQuery) GetValues() []interface{} {
-	return sqc.qwhere.GetWheresValues()
+func (sqc *SelectQueryChain) GetValues() []interface{} {
+	return sqc.qwhere.wherevals
 }
 
-func Select(iqc SelectQuery, fieldnames ...string) SelectQuery {
+func (iqc SelectQueryChain) Select(fieldnames ...string) SelectQueryChain {
 	iqc.fieldnames = fieldnames
 	return iqc
 }
 
-func Where(iqc SelectQuery, w string, vals ...interface{}) SelectQuery {
-	iqc.qwhere = where.Where(iqc.qwhere, w, vals)
+func (iqc SelectQueryChain) Where(w string, vals ...interface{}) SelectQueryChain {
+	iqc.qwhere.where(w, vals)
 	return iqc
 }
 
-func WhereKey(iqc SelectQuery, k string, v interface{}) SelectQuery {
-	iqc.qwhere = where.WhereKey(iqc.qwhere, k, v)
+func (iqc SelectQueryChain) WhereKey(k string, v interface{}) SelectQueryChain {
+	iqc.qwhere.whereKey(k, v)
 	return iqc
 }
 
-func WhereModel(iqc SelectQuery, o interface{}, fields ...string) SelectQuery {
-	iqc.qwhere = where.WhereModel(iqc.qwhere, o, fields)
+func (iqc SelectQueryChain) WhereModel(o interface{}, fields ...string) SelectQueryChain {
+	iqc.qwhere.whereModel(o, fields)
 	return iqc
 }
