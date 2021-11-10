@@ -1,4 +1,4 @@
-package query
+package metadata
 
 import (
 	"gochat/lib/util"
@@ -8,26 +8,26 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func getModelTablename(md interface{}) string {
+func GetModelTablename(md interface{}) string {
 	return strings.ToLower(reflect.TypeOf(md).Name()) + "s"
 }
 
 func MakeModelMetadata(md interface{}) ModelMetadata {
-	mtname := getModelTablename(md)
+	mtname := GetModelTablename(md)
 	mMetadata := ModelMetadata{Tablename: mtname}
 
 	tof := reflect.TypeOf(md)
 	vof := reflect.ValueOf(md)
 	flen := tof.NumField()
 
-	fMetadata := []fieldMetadata{}
+	fMetadata := []FieldMetadata{}
 
 	for i := 0; i < flen; i++ {
 		if vof.Field(i).CanInterface() {
-			fMetadata = append(fMetadata, fieldMetadata{
-				name:  strings.ToLower(tof.Field(i).Name),
-				value: vof.Field(i).Interface(),
-				tags:  strings.Split(strings.ToLower(tof.Field(i).Tag.Get("sqldb")), ","),
+			fMetadata = append(fMetadata, FieldMetadata{
+				Name:  strings.ToLower(tof.Field(i).Name),
+				Value: vof.Field(i).Interface(),
+				Tags:  strings.Split(strings.ToLower(tof.Field(i).Tag.Get("sqldb")), ","),
 			})
 		}
 	}
@@ -38,13 +38,13 @@ func MakeModelMetadata(md interface{}) ModelMetadata {
 
 type ModelMetadata struct {
 	Tablename string
-	Fields    []fieldMetadata
+	Fields    []FieldMetadata
 }
 
-func (m ModelMetadata) removePrimary() ModelMetadata {
-	newFields := make([]fieldMetadata, 0, len(m.Fields))
+func RemovePrimary(m ModelMetadata) ModelMetadata {
+	newFields := make([]FieldMetadata, 0, len(m.Fields))
 	for _, field := range m.Fields {
-		if !util.ArrStringContains(field.tags, TAG_PRIMARY_KEY) {
+		if !util.ArrStringContains(field.Tags, TAG_PRIMARY_KEY) {
 			newFields = append(newFields, field)
 		}
 	}
@@ -52,32 +52,32 @@ func (m ModelMetadata) removePrimary() ModelMetadata {
 	return m
 }
 
-func (m *ModelMetadata) getFieldnames() []string {
+func (m *ModelMetadata) GetFieldnames() []string {
 	flen := len(m.Fields)
 	fieldnames := make([]string, flen)
 	for i, field := range m.Fields {
-		fieldnames[i] = field.name
+		fieldnames[i] = field.Name
 	}
 	return fieldnames
 }
 
-func (m *ModelMetadata) getValues() []interface{} {
+func (m *ModelMetadata) GetValues() []interface{} {
 	flen := len(m.Fields)
 	values := make([]interface{}, flen)
 	for i, field := range m.Fields {
-		values[i] = field.value
+		values[i] = field.Value
 	}
 	return values
 }
 
-type fieldMetadata struct {
-	name  string
-	tags  []string
-	value interface{}
+type FieldMetadata struct {
+	Name  string
+	Tags  []string
+	Value interface{}
 }
 
-func (f *fieldMetadata) getSQLType() string {
-	for _, tag := range f.tags {
+func (f *FieldMetadata) GetSQLType() string {
+	for _, tag := range f.Tags {
 		tval := strings.Split(tag, "-")
 		if tval[0] == MOD_TAG_VARCHAR {
 			return "varchar(" + tval[1] + ")"
@@ -85,11 +85,11 @@ func (f *fieldMetadata) getSQLType() string {
 			return "char(" + tval[1] + ")"
 		}
 	}
-	return f.getValueType()
+	return f.GetValueType()
 }
 
-func (f *fieldMetadata) getValueType() string {
-	switch f.value.(type) {
+func (f *FieldMetadata) GetValueType() string {
+	switch f.Value.(type) {
 	case int, int64:
 		return "INT"
 	case int16:
@@ -97,15 +97,15 @@ func (f *fieldMetadata) getValueType() string {
 	case string:
 		return "varchar(255)"
 	default:
-		logrus.Panic("Type Not Supported ", reflect.TypeOf(f.value))
+		logrus.Panic("Type Not Supported ", reflect.TypeOf(f.Value))
 		return ""
 	}
 }
 
-func (f *fieldMetadata) getTagConstraints() string {
-	tags := make([]string, len(f.tags))
-	for i := range f.tags {
-		tval := strings.Split(f.tags[i], "-")
+func (f *FieldMetadata) GetTagConstraints() string {
+	tags := make([]string, len(f.Tags))
+	for i := range f.Tags {
+		tval := strings.Split(f.Tags[i], "-")
 		tg := tagDef[tval[0]]
 
 		switch tval[0] {

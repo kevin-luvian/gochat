@@ -1,4 +1,4 @@
-package query
+package metadata
 
 var TAG_UNIQUE = "unique"
 var TAG_NOT_NULL = "nnull"

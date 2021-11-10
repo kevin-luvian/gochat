@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"gochat/lib/database/sql/query"
+	"gochat/lib/database/sql/query/metadata"
 	"strconv"
 	"strings"
 
@@ -98,7 +99,7 @@ func (s *SQLDB) CreateTables(models ...interface{}) {
 }
 
 func (s *SQLDB) createTable(o interface{}) {
-	mmeta := query.MakeModelMetadata(o)
+	mmeta := metadata.MakeModelMetadata(o)
 	q := query.MakeCreateTableQuery(o)
 	if _, err := s.database.Exec(q); err != nil {
 		switch {
@@ -114,7 +115,7 @@ func (s *SQLDB) createTable(o interface{}) {
 }
 
 func (s *SQLDB) dropTable(o interface{}) {
-	mmeta := query.MakeModelMetadata(o)
+	mmeta := metadata.MakeModelMetadata(o)
 	q := query.MakeDropTableQuery(o)
 	if _, err := s.database.Exec(q); err != nil {
 		switch {

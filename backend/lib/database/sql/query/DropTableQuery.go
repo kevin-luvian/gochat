@@ -1,6 +1,8 @@
 package query
 
+import "gochat/lib/database/sql/query/metadata"
+
 func MakeDropTableQuery(o interface{}) string {
-	mmeta := MakeModelMetadata(o)
-	return "DROP TABLE " + mmeta.Tablename + " CASCADE"
+	tablename := metadata.GetModelTablename(o)
+	return "DROP TABLE " + tablename + " CASCADE"
 }

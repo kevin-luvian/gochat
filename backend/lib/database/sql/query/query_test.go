@@ -31,24 +31,28 @@ func TestDropTableQuery(t *testing.T) {
 }
 
 func TestSelectQuery(t *testing.T) {
-	var sqc SelectQueryChain
+	var sqc SelectQuery
 	user := makeUser()
 
-	sqc = MakeSelectQueryChain(user)
+	sqc = MakeSelectQuery(user)
 	logrus.Info(sqc.ToString(), sqc.GetValues())
 
-	sqc = MakeSelectQueryChain(user).WhereKey("id", 10)
+	sqc = MakeSelectQuery(user)
+	sqc = WhereKey(sqc, "id", 10)
 	logrus.Info(sqc.ToString(), sqc.GetValues())
 
-	sqc = MakeSelectQueryChain(user).WhereModel(user, "id", "nickname")
+	sqc = MakeSelectQuery(user)
+	sqc = WhereModel(sqc, user, "id", "nickname")
 	logrus.Info(sqc.ToString(), sqc.GetValues())
 
-	sqc = MakeSelectQueryChain(user).
-		Select("name").
-		Where("name = ? OR nickname = ?", "bro", "bruh")
+	sqc = MakeSelectQuery(user)
+	sqc = Select(sqc, "name")
+	sqc = Where(sqc, "name = ? OR nickname = ?", "bro", "bruh")
 	logrus.Info(sqc.ToString(), sqc.GetValues())
 
-	sqc = MakeSelectQueryChain(user).Select("name", "nickname").WhereModel(user, "name")
+	sqc = MakeSelectQuery(user)
+	sqc = Select(sqc, "name", "nickname")
+	sqc = WhereModel(sqc, user, "name")
 	logrus.Info(sqc.ToString(), sqc.GetValues())
 }
 

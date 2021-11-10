@@ -1,12 +1,13 @@
 package query
 
 import (
+	"gochat/lib/database/sql/query/metadata"
 	"strings"
 )
 
 func MakeInsertQueryChain(o interface{}) InsertQueryChain {
 	return InsertQueryChain{
-		tablename: getModelTablename(o),
+		tablename: metadata.GetModelTablename(o),
 	}
 }
 
@@ -49,20 +50,24 @@ func (iqc *InsertQueryChain) valuesToString() string {
 }
 
 func (iqc InsertQueryChain) InsertModel(o interface{}) InsertQueryChain {
-	mmeta := MakeModelMetadata(o).removePrimary()
-	iqc.keys = mmeta.getFieldnames()
-	iqc.values = [][]interface{}{mmeta.getValues()}
+	mmeta := metadata.MakeModelMetadata(o)
+	mmeta = metadata.RemovePrimary(mmeta)
+
+	iqc.keys = mmeta.GetFieldnames()
+	iqc.values = [][]interface{}{mmeta.GetValues()}
 	return iqc
 }
 
 func (iqc InsertQueryChain) InsertManyModel(arr ...interface{}) InsertQueryChain {
 	iqc.values = [][]interface{}{}
 	for i, o := range arr {
-		mmeta := MakeModelMetadata(o).removePrimary()
+		mmeta := metadata.MakeModelMetadata(o)
+		mmeta = metadata.RemovePrimary(mmeta)
+
 		if i == 1 {
-			iqc.keys = mmeta.getFieldnames()
+			iqc.keys = mmeta.GetFieldnames()
 		}
-		iqc.values = append(iqc.values, mmeta.getValues())
+		iqc.values = append(iqc.values, mmeta.GetValues())
 	}
 	return iqc
 }
