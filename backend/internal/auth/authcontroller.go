@@ -7,6 +7,7 @@ import (
 	"gochat/helper"
 	"gochat/helper/util"
 	"gochat/internal/auth/GOAuth"
+	"gochat/lib/database/redis"
 	"io/ioutil"
 	"net/http"
 )
@@ -16,8 +17,12 @@ func temp(w http.ResponseWriter, r *http.Request) {
 }
 
 func loginGoogle(w http.ResponseWriter, r *http.Request) {
-	state, url := GOAuth.MakeLoginURLCredential()
-	database.GetRedis().SETEX(state, util.SecHour(1), "")
+	config := GOAuth.GetGOAuthConf()
+	state, url := GOAuth.MakeLoginURLCredential(config)
+
+	rpool := database.GetRedisConnection()
+	redis.SETEX(rpool, state, util.SecHour(1), "")
+
 	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
@@ -26,7 +31,9 @@ func authGoogle(w http.ResponseWriter, r *http.Request) {
 	state := query.Get("state")
 	code := query.Get("code")
 
-	if !database.GetRedis().EXIST(state) {
+	rpool := database.GetRedisConnection()
+
+	if !redis.EXIST(rpool, state) {
 		helper.FailedJSON(w, http.StatusBadRequest, "state is not valid", nil)
 		return
 	}

@@ -2,15 +2,15 @@ package database
 
 import (
 	"fmt"
-	libredis "gochat/lib/database/redis"
+	"gochat/lib/database/redis"
 	"os"
 	"sync"
 )
 
 var redisonce sync.Once
-var redisInstance *libredis.Redis
+var redisInstance *redis.RedisConnection
 
-func GetRedis() *libredis.Redis {
+func GetRedisConnection() *redis.RedisConnection {
 	if redisInstance == nil {
 		redisonce.Do(makeRedisInstance)
 	}
@@ -18,8 +18,7 @@ func GetRedis() *libredis.Redis {
 }
 
 func makeRedisInstance() {
-	redisDB := libredis.MakeRedisDB("tcp", getRedisAddress())
-	redisInstance = &redisDB
+	redisInstance = redis.MakeRedisDBPool("tcp", getRedisAddress())
 }
 
 func getRedisAddress() string {
@@ -27,6 +26,7 @@ func getRedisAddress() string {
 		return fmt.Sprintf("%s:%s",
 			os.Getenv("DB_REDIS_DEV_HOST"),
 			os.Getenv("DB_REDIS_DEV_PORT"))
+	} else {
+		return os.Getenv("REDIS_URL")
 	}
-	return os.Getenv("REDIS_URL")
 }

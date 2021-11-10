@@ -5,32 +5,26 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type Redis struct {
-	network string
-	url     string
-	pool    *redis.Pool
+type RedisConnection struct {
+	pool *redis.Pool
 }
 
-func MakeRedisDB(network string, url string) Redis {
-	rPool := redis.Pool{
-		MaxIdle:   80,
-		MaxActive: 12000,
-		Dial: func() (redis.Conn, error) {
-			c, err := redis.Dial(network, url)
-			if err != nil {
-				logrus.Panic("Cant establish redis connection. ", err.Error())
-			}
-			return c, err
-		},
-	}
-	return Redis{
-		network: network,
-		url:     url,
-		pool:    &rPool,
-	}
+func MakeRedisDBPool(network string, url string) *RedisConnection {
+	return &RedisConnection{
+		pool: &redis.Pool{
+			MaxIdle:   80,
+			MaxActive: 12000,
+			Dial: func() (redis.Conn, error) {
+				c, err := redis.Dial(network, url)
+				if err != nil {
+					logrus.Panic("Cant establish redis connection. ", err.Error())
+				}
+				return c, err
+			},
+		}}
 }
 
-func (r *Redis) FLUSH() {
+func FLUSH(r *RedisConnection) {
 	conn := r.pool.Get()
 	defer conn.Close()
 
@@ -40,7 +34,7 @@ func (r *Redis) FLUSH() {
 	}
 }
 
-func (r *Redis) DEL(key string) {
+func DEL(r *RedisConnection, key string) {
 	conn := r.pool.Get()
 	defer conn.Close()
 
@@ -50,7 +44,7 @@ func (r *Redis) DEL(key string) {
 	}
 }
 
-func (r *Redis) SET(key string, val string) {
+func SET(r *RedisConnection, key string, val string) {
 	conn := r.pool.Get()
 	defer conn.Close()
 
@@ -60,7 +54,7 @@ func (r *Redis) SET(key string, val string) {
 	}
 }
 
-func (r *Redis) SETEX(key string, exp int, val string) {
+func SETEX(r *RedisConnection, key string, exp int, val string) {
 	conn := r.pool.Get()
 	defer conn.Close()
 
@@ -70,7 +64,7 @@ func (r *Redis) SETEX(key string, exp int, val string) {
 	}
 }
 
-func (r *Redis) GET(key string) (bool, string) {
+func GET(r *RedisConnection, key string) (bool, string) {
 	conn := r.pool.Get()
 	defer conn.Close()
 
@@ -84,7 +78,7 @@ func (r *Redis) GET(key string) (bool, string) {
 	return true, result
 }
 
-func (r *Redis) EXIST(key string) bool {
+func EXIST(r *RedisConnection, key string) bool {
 	conn := r.pool.Get()
 	defer conn.Close()
 

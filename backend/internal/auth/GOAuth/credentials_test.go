@@ -3,13 +3,15 @@ package GOAuth
 import (
 	"gochat/database"
 	"gochat/env"
+	"gochat/lib/database/redis"
 	"log"
 	"testing"
 )
 
 func init() {
 	env.LoadDotEnvForTest()
-	database.GetRedis().FLUSH()
+	rpool := database.GetRedisConnection()
+	redis.FLUSH(rpool)
 }
 
 func TestCheckCredentialsData(t *testing.T) {
@@ -20,7 +22,8 @@ func TestCheckCredentialsData(t *testing.T) {
 }
 
 func TestCheckLoginCredential(t *testing.T) {
-	token, url := MakeLoginURLCredential()
+	config := GetGOAuthConf()
+	token, url := MakeLoginURLCredential(config)
 	log.Println("Token: ", token)
 	log.Println("Login Url: ", url)
 }
