@@ -13,22 +13,22 @@ func init() {
 	env.LoadDotEnvForTest()
 }
 
-func makeTestRedisPool() *redis.RedisConnection {
-	conn := GetRedisConnection()
-	redis.FLUSH(conn)
-	return conn
+func makeTestRedisDB() *redis.Redis {
+	redisdb := GetRedis()
+	redisdb.FLUSH()
+	return redisdb
 }
 
-func TestGetSet(t *testing.T) {
-	rpool := makeTestRedisPool()
+func TestRedisGetSet(t *testing.T) {
+	redisdb := makeTestRedisDB()
 
 	key := "state"
 	value := "wabalasladk"
 
-	redis.SET(rpool, key, value)
+	redisdb.SET(key, value)
 	logrus.Info("set redis key: ", key, ", value: ", value)
 
-	ok, res := redis.GET(rpool, key)
+	ok, res := redisdb.GET(key)
 	if !ok {
 		t.Fatalf(`can't get key.`)
 	} else {
@@ -41,7 +41,7 @@ func TestGetSet(t *testing.T) {
 		logrus.Info("result and value match")
 	}
 
-	if ok, _ = redis.GET(rpool, "somekey"); ok {
+	if ok, _ = redisdb.GET("somekey"); ok {
 		t.Fatalf(`non existent key found using get`)
 	} else {
 		logrus.Info("non existent key not found using get")
@@ -49,21 +49,21 @@ func TestGetSet(t *testing.T) {
 }
 
 func TestExist(t *testing.T) {
-	rpool := makeTestRedisPool()
+	redisdb := makeTestRedisDB()
 
 	key := "state"
 	value := "value"
 
-	redis.SET(rpool, key, value)
+	redisdb.SET(key, value)
 	logrus.Info("set redis key")
 
-	if exist := redis.EXIST(rpool, key); !exist {
+	if exist := redisdb.EXIST(key); !exist {
 		t.Fatalf(`key not found`)
 	} else {
 		logrus.Info("key found")
 	}
 
-	if exist := redis.EXIST(rpool, "somekey"); exist {
+	if exist := redisdb.EXIST("somekey"); exist {
 		t.Fatalf(`non existent key found`)
 	} else {
 		logrus.Info("non existent key not found")
@@ -71,18 +71,18 @@ func TestExist(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
-	rpool := makeTestRedisPool()
+	redisdb := makeTestRedisDB()
 
 	key := "state"
 	value := "value"
 
-	redis.SET(rpool, key, value)
+	redisdb.SET(key, value)
 	logrus.Info("set redis key")
 
-	redis.DEL(rpool, key)
+	redisdb.DEL(key)
 	logrus.Info("key deleted")
 
-	if exist := redis.EXIST(rpool, key); exist {
+	if exist := redisdb.EXIST(key); exist {
 		t.Fatalf(`key still exist`)
 	} else {
 		logrus.Info("key not found")
@@ -90,23 +90,23 @@ func TestDelete(t *testing.T) {
 }
 
 func TestSetFor(t *testing.T) {
-	rpool := makeTestRedisPool()
+	redisdb := makeTestRedisDB()
 
 	key := "state"
 	value := "value"
 
-	redis.SETEX(rpool, key, 1, value)
+	redisdb.SETEX(key, 1, value)
 	logrus.Info("set redis key for 1 second")
 
 	time.Sleep(time.Second / 2)
-	if exist := redis.EXIST(rpool, key); !exist {
+	if exist := redisdb.EXIST(key); !exist {
 		t.Fatalf(`key not found`)
 	} else {
 		logrus.Info("key found")
 	}
 
 	time.Sleep(time.Second / 2)
-	if exist := redis.EXIST(rpool, key); exist {
+	if exist := redisdb.EXIST(key); exist {
 		t.Fatalf(`key still exist`)
 	} else {
 		logrus.Info("key not found")

@@ -33,8 +33,8 @@ func makeGOAuthConf() {
 	}
 }
 
-func MakeLoginURLCredential(config *oauth2.Config) (string, string) {
+func MakeLoginURLCredential() (string, string) {
 	credid := "GoogleAuthCredential_"
 	state := credid + util.MakeUUIDNoDash()
-	return state, config.AuthCodeURL(state)
+	return state, GetGOAuthConf().AuthCodeURL(state)
 }
