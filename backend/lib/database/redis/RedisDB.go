@@ -31,50 +31,35 @@ func MakeRedisDB(network string, url string) Redis {
 }
 
 func (r *Redis) FLUSH() {
-	conn := r.pool.Get()
-	defer conn.Close()
-
-	_, err := conn.Do("FLUSHALL")
+	_, err := redisDo(r, "FLUSHALL")
 	if err != nil {
 		logrus.Panic("Cant flush redis. ", err.Error())
 	}
 }
 
 func (r *Redis) DEL(key string) {
-	conn := r.pool.Get()
-	defer conn.Close()
-
-	_, err := conn.Do("DEL", key)
+	_, err := redisDo(r, "DEL", key)
 	if err != nil {
 		logrus.Panic("Cant del redis. ", err.Error())
 	}
 }
 
 func (r *Redis) SET(key string, val string) {
-	conn := r.pool.Get()
-	defer conn.Close()
-
-	_, err := conn.Do("SET", key, val)
+	_, err := redisDo(r, "SET", key, val)
 	if err != nil {
 		logrus.Panic("Cant set redis. ", err.Error())
 	}
 }
 
 func (r *Redis) SETEX(key string, exp int, val string) {
-	conn := r.pool.Get()
-	defer conn.Close()
-
-	_, err := conn.Do("SETEX", key, exp, val)
+	_, err := redisDo(r, "SETEX", key, exp, val)
 	if err != nil {
 		logrus.Panic("Cant set redis. ", err.Error())
 	}
 }
 
 func (r *Redis) GET(key string) (bool, string) {
-	conn := r.pool.Get()
-	defer conn.Close()
-
-	result, err := redis.String(conn.Do("GET", key))
+	result, err := redis.String(redisDo(r, "GET", key))
 	if err != nil {
 		if err == redis.ErrNil {
 			return false, ""
@@ -85,12 +70,15 @@ func (r *Redis) GET(key string) (bool, string) {
 }
 
 func (r *Redis) EXIST(key string) bool {
-	conn := r.pool.Get()
-	defer conn.Close()
-
-	result, err := redis.Bool(conn.Do("EXISTS", key))
+	result, err := redis.Bool(redisDo(r, "EXISTS", key))
 	if err != nil {
 		logrus.Panic("cant check redis exists. ", err.Error())
 	}
 	return result
+}
+
+func redisDo(r *Redis, cmd string, args ...interface{}) (interface{}, error) {
+	conn := r.pool.Get()
+	defer conn.Close()
+	return conn.Do(cmd, args...)
 }

@@ -4,7 +4,6 @@ import "net/http"
 
 type httpMethod string
 
-// Declare typed constants each with type of status
 const (
 	GET    httpMethod = "GET"
 	PUT    httpMethod = "PUT"
