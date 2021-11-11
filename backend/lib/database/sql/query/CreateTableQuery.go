@@ -1,20 +1,17 @@
 package query
 
 import (
+	"gochat/lib/database/sql/query/internal"
 	"strings"
 )
 
-func MakeCreateTableQuery(o interface{}) string {
-	mmeta := MakeModelMetadata(o)
+func MakeCreateTableQuery(o interface{}) TableQuery {
+	mmeta := internal.MakeModelMetadata(o)
 	b := strings.Builder{}
 	b.WriteString("CREATE TABLE ")
 	b.WriteString(mmeta.Tablename)
 	b.WriteString("( ")
-	nametags := make([]string, len(mmeta.Fields))
-	for i, field := range mmeta.Fields {
-		nametags[i] = field.name + " " + field.getSQLType() + " " + field.getTagConstraints()
-	}
-	b.WriteString(strings.Join(nametags, ", "))
+	b.WriteString(strings.Join(mmeta.GetFieldSQLTags(), ", "))
 	b.WriteString(")")
-	return b.String()
+	return TableQuery{mmeta.Tablename, b.String()}
 }

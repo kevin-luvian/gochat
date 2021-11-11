@@ -1,4 +1,4 @@
-package query
+package internal
 
 import (
 	"gochat/lib/util"
@@ -8,12 +8,12 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func getModelTablename(md interface{}) string {
+func GetModelTablename(md interface{}) string {
 	return strings.ToLower(reflect.TypeOf(md).Name()) + "s"
 }
 
 func MakeModelMetadata(md interface{}) ModelMetadata {
-	mtname := getModelTablename(md)
+	mtname := GetModelTablename(md)
 	mMetadata := ModelMetadata{Tablename: mtname}
 
 	tof := reflect.TypeOf(md)
@@ -41,7 +41,35 @@ type ModelMetadata struct {
 	Fields    []fieldMetadata
 }
 
-func (m ModelMetadata) removePrimary() ModelMetadata {
+func (m *ModelMetadata) FLen() int {
+	return len(m.Fields)
+}
+
+func (m *ModelMetadata) GetFieldSQLTags() []string {
+	nametags := make([]string, len(m.Fields))
+	for i, field := range m.Fields {
+		nametags[i] = field.name + " " + field.getSQLType() + " " + field.getTagConstraints()
+	}
+	return nametags
+}
+
+func (m *ModelMetadata) GetNames() []string {
+	fieldnames := make([]string, len(m.Fields))
+	for i, field := range m.Fields {
+		fieldnames[i] = field.name
+	}
+	return fieldnames
+}
+
+func (m *ModelMetadata) GetValues() []interface{} {
+	values := make([]interface{}, len(m.Fields))
+	for i, field := range m.Fields {
+		values[i] = field.value
+	}
+	return values
+}
+
+func RmvMModelPK(m ModelMetadata) ModelMetadata {
 	newFields := make([]fieldMetadata, 0, len(m.Fields))
 	for _, field := range m.Fields {
 		if !util.ArrStringContains(field.tags, TAG_PRIMARY_KEY) {
@@ -50,24 +78,6 @@ func (m ModelMetadata) removePrimary() ModelMetadata {
 	}
 	m.Fields = newFields
 	return m
-}
-
-func (m *ModelMetadata) getFieldnames() []string {
-	flen := len(m.Fields)
-	fieldnames := make([]string, flen)
-	for i, field := range m.Fields {
-		fieldnames[i] = field.name
-	}
-	return fieldnames
-}
-
-func (m *ModelMetadata) getValues() []interface{} {
-	flen := len(m.Fields)
-	values := make([]interface{}, flen)
-	for i, field := range m.Fields {
-		values[i] = field.value
-	}
-	return values
 }
 
 type fieldMetadata struct {

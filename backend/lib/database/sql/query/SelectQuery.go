@@ -1,21 +1,22 @@
 package query
 
 import (
+	"gochat/lib/database/sql/query/internal"
 	"strings"
 )
 
 func MakeSelectQueryChain(o interface{}) SelectQueryChain {
 	return SelectQueryChain{
-		tablename:  getModelTablename(o),
+		tablename:  internal.GetModelTablename(o),
 		fieldnames: []string{},
-		qwhere:     makeWhereQuery(),
+		qwhere:     internal.MakeWhereQuery(),
 	}
 }
 
 type SelectQueryChain struct {
 	tablename  string
 	fieldnames []string
-	qwhere     whereQuery
+	qwhere     internal.WhereQuery
 }
 
 func (iqc *SelectQueryChain) ToString() string {
@@ -28,15 +29,15 @@ func (iqc *SelectQueryChain) ToString() string {
 	}
 	b.WriteString(" FROM ")
 	b.WriteString(iqc.tablename)
-	if iqc.qwhere.hasAny() {
+	if iqc.qwhere.HasAny() {
 		b.WriteString(" WHERE ")
-		b.WriteString(iqc.qwhere.wheres)
+		b.WriteString(iqc.qwhere.GetQuery())
 	}
 	return b.String()
 }
 
 func (sqc *SelectQueryChain) GetValues() []interface{} {
-	return sqc.qwhere.wherevals
+	return sqc.qwhere.GetValues()
 }
 
 func (iqc SelectQueryChain) Select(fieldnames ...string) SelectQueryChain {
@@ -45,16 +46,16 @@ func (iqc SelectQueryChain) Select(fieldnames ...string) SelectQueryChain {
 }
 
 func (iqc SelectQueryChain) Where(w string, vals ...interface{}) SelectQueryChain {
-	iqc.qwhere.where(w, vals)
+	iqc.qwhere = iqc.qwhere.Args(w, vals)
 	return iqc
 }
 
 func (iqc SelectQueryChain) WhereKey(k string, v interface{}) SelectQueryChain {
-	iqc.qwhere.whereKey(k, v)
+	iqc.qwhere = iqc.qwhere.Key(k, v)
 	return iqc
 }
 
 func (iqc SelectQueryChain) WhereModel(o interface{}, fields ...string) SelectQueryChain {
-	iqc.qwhere.whereModel(o, fields)
+	iqc.qwhere = iqc.qwhere.Model(o, fields)
 	return iqc
 }

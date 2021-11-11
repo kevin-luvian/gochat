@@ -1,16 +1,17 @@
 package query
 
 import (
+	"gochat/lib/database/sql/query/internal"
 	"gochat/lib/util"
 	"strings"
 )
 
 func MakeUpdateQueryChain(o interface{}) UpdateQueryChain {
 	return UpdateQueryChain{
-		tablename: getModelTablename(o),
+		tablename: internal.GetModelTablename(o),
 		sets:      []string{},
 		setvals:   []interface{}{},
-		qwhere:    makeWhereQuery(),
+		qwhere:    internal.MakeWhereQuery(),
 	}
 }
 
@@ -18,7 +19,7 @@ type UpdateQueryChain struct {
 	tablename string
 	sets      []string
 	setvals   []interface{}
-	qwhere    whereQuery
+	qwhere    internal.WhereQuery
 }
 
 func (uqc *UpdateQueryChain) ToString() string {
@@ -28,29 +29,38 @@ func (uqc *UpdateQueryChain) ToString() string {
 	b.WriteString(" SET ")
 	b.WriteString(strings.Join(uqc.sets, ", "))
 	b.WriteString(" WHERE ")
-	b.WriteString(uqc.qwhere.wheres)
+	b.WriteString(uqc.qwhere.GetQuery())
 	return b.String()
 }
 
-func (uqc UpdateQueryChain) GetValues() []interface{} {
-	allvals := make([]interface{}, len(uqc.setvals)+len(uqc.qwhere.wherevals))
-	for i := range uqc.setvals {
+func (uqc *UpdateQueryChain) GetValues() []interface{} {
+	qwValues := uqc.qwhere.GetValues()
+	svLen := len(uqc.setvals)
+	qwLen := len(qwValues)
+
+	allvals := make([]interface{}, svLen+qwLen)
+	for i := 0; i < svLen; i++ {
 		allvals[i] = uqc.setvals[i]
 	}
-	for i := range uqc.qwhere.wherevals {
-		allvals[i+len(uqc.setvals)] = uqc.qwhere.wherevals[i]
+	for i := 0; i < qwLen; i++ {
+		allvals[svLen+i] = qwValues[i]
 	}
 	return allvals
 }
 
 func (uqc UpdateQueryChain) SetModel(o interface{}, fields ...string) UpdateQueryChain {
-	mmeta := MakeModelMetadata(o).removePrimary()
-	uqc.sets = make([]string, 0, len(mmeta.Fields))
-	uqc.setvals = make([]interface{}, 0, len(mmeta.Fields))
-	for _, field := range mmeta.Fields {
-		if len(fields) == 0 || util.ArrStringContains(fields, field.name) {
-			uqc.sets = append(uqc.sets, field.name+" = ?")
-			uqc.setvals = append(uqc.setvals, field.value)
+	mmeta := internal.MakeModelMetadata(o)
+	mmeta = internal.RmvMModelPK(mmeta)
+
+	uqc.sets = make([]string, 0, mmeta.FLen())
+	uqc.setvals = make([]interface{}, 0, mmeta.FLen())
+
+	fnames := mmeta.GetNames()
+	fvalues := mmeta.GetValues()
+	for i := 0; i < mmeta.FLen(); i++ {
+		if len(fields) == 0 || util.ArrStringContains(fields, fnames[i]) {
+			uqc.sets = append(uqc.sets, fnames[i]+" = ?")
+			uqc.setvals = append(uqc.setvals, fvalues[i])
 		}
 	}
 	return uqc
@@ -63,16 +73,16 @@ func (uqc UpdateQueryChain) Set(k string, v interface{}) UpdateQueryChain {
 }
 
 func (uqc UpdateQueryChain) Where(w string, vals ...interface{}) UpdateQueryChain {
-	uqc.qwhere.where(w, vals)
+	uqc.qwhere = uqc.qwhere.Args(w, vals)
 	return uqc
 }
 
 func (uqc UpdateQueryChain) WhereKey(k string, v interface{}) UpdateQueryChain {
-	uqc.qwhere.whereKey(k, v)
+	uqc.qwhere = uqc.qwhere.Key(k, v)
 	return uqc
 }
 
 func (uqc UpdateQueryChain) WhereModel(o interface{}, fields ...string) UpdateQueryChain {
-	uqc.qwhere.whereModel(o, fields)
+	uqc.qwhere = uqc.qwhere.Model(o, fields)
 	return uqc
 }

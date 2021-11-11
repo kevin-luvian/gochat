@@ -2,6 +2,7 @@ package sql
 
 import (
 	"database/sql"
+	"gochat/lib/database/sql/query"
 	"strings"
 
 	"github.com/sirupsen/logrus"
@@ -11,12 +12,11 @@ import (
 
 func FindRowsQuery(
 	db *sql.DB,
-	qstr string,
-	qvals []interface{},
+	q query.RowQuery,
 	addrs []interface{},
 	callback func()) error {
 
-	rows, err := db.Query(qstr, qvals...)
+	rows, err := db.Query(q.ToString(), q.GetValues()...)
 	if err != nil {
 		panic(err)
 	}
@@ -27,7 +27,7 @@ func FindRowsQuery(
 			if err == sql.ErrNoRows {
 				return err
 			}
-			logrus.Panic("Cant query ", qstr, "\n", err)
+			logrus.Panic("Cant query ", q.ToString(), "\n", err)
 		}
 		callback()
 	}
@@ -35,22 +35,21 @@ func FindRowsQuery(
 	return nil
 }
 
-func FindRowQuery(
-	db *sql.DB, qstr string, qvals []interface{}, addrs []interface{}) error {
+func FindRowQuery(db *sql.DB, q query.RowQuery, addrs []interface{}) error {
 	// Query for a value based on a single row.
 	if err := db.
-		QueryRow(qstr, qvals...).
+		QueryRow(q.ToString(), q.GetValues()...).
 		Scan(addrs...); err != nil {
 		if err == sql.ErrNoRows {
 			return err
 		}
-		logrus.Panic("Cant query ", qstr, "\n", err)
+		logrus.Panic("Cant query ", q.ToString(), "\n", err)
 	}
 	return nil
 }
 
-func InsertRowQuery(db *sql.DB, qstr string, qvals []interface{}) (int64, error) {
-	qresult, err := db.Exec(qstr, qvals...)
+func InsertRowQuery(db *sql.DB, q query.RowQuery) (int64, error) {
+	qresult, err := db.Exec(q.ToString(), q.GetValues()...)
 	if err != nil {
 		switch {
 		case strings.Contains(strings.ToLower(err.Error()), "duplicate entry"):
@@ -66,16 +65,16 @@ func InsertRowQuery(db *sql.DB, qstr string, qvals []interface{}) (int64, error)
 	return rId, nil
 }
 
-func UpdateRowQuery(db *sql.DB, qstr string, qvals []interface{}) (int64, error) {
-	return execRowQuery(db, qstr, qvals)
+func UpdateRowQuery(db *sql.DB, q query.RowQuery) (int64, error) {
+	return execRowQuery(db, q)
 }
 
-func DeleteRowQuery(db *sql.DB, qstr string, qvals []interface{}) (int64, error) {
-	return execRowQuery(db, qstr, qvals)
+func DeleteRowQuery(db *sql.DB, q query.RowQuery) (int64, error) {
+	return execRowQuery(db, q)
 }
 
-func execRowQuery(db *sql.DB, qstr string, qvals []interface{}) (int64, error) {
-	qresult, err := db.Exec(qstr, qvals...)
+func execRowQuery(db *sql.DB, q query.RowQuery) (int64, error) {
+	qresult, err := db.Exec(q.ToString(), q.GetValues()...)
 	if err != nil {
 		logrus.Panic("UNKNOWN ERROR OCCURED", err)
 	}

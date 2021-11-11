@@ -9,25 +9,30 @@ import (
 )
 
 type User struct {
-	Id       int    `json:"id" sqldb:"pkey"`
-	Name     string `json:"name" sqldb:"nnull,unique"`
-	Nickname string `json:"nickname" sqldb:"unique,vchar-10"`
+	Id       int    `sqldb:"pkey"`
+	Name     string `sqldb:"nnull,unique"`
+	Nickname string `sqldb:"unique,vchar-10"`
 }
 
 func makeUser() User {
 	return User{Id: 0, Name: "bob", Nickname: "marley"}
 }
 
+func logQueryStr(q RowQuery) {
+	logrus.Info(q.ToString(), " ", q.GetValues())
+}
+
 func TestCreateTableQuery(t *testing.T) {
 	user := makeUser()
 	q := MakeCreateTableQuery(user)
-	logrus.Info(q)
+	logrus.Info(q.Qstr)
 }
 
 func TestDropTableQuery(t *testing.T) {
 	q := MakeDropTableQuery(User{})
 	qexpect := "DROP TABLE users CASCADE"
-	assert.Equal(t, strings.ToLower(qexpect), strings.ToLower(q))
+	assert.Equal(t, strings.ToLower(qexpect), strings.ToLower(q.Qstr))
+	logrus.Info(q.Qstr)
 }
 
 func TestSelectQuery(t *testing.T) {
@@ -35,44 +40,44 @@ func TestSelectQuery(t *testing.T) {
 	user := makeUser()
 
 	sqc = MakeSelectQueryChain(user)
-	logrus.Info(sqc.ToString(), sqc.GetValues())
+	logQueryStr(&sqc)
 
 	sqc = MakeSelectQueryChain(user).WhereKey("id", 10)
-	logrus.Info(sqc.ToString(), sqc.GetValues())
+	logQueryStr(&sqc)
 
 	sqc = MakeSelectQueryChain(user).WhereModel(user, "id", "nickname")
-	logrus.Info(sqc.ToString(), sqc.GetValues())
+	logQueryStr(&sqc)
 
 	sqc = MakeSelectQueryChain(user).
 		Select("name").
 		Where("name = ? OR nickname = ?", "bro", "bruh")
-	logrus.Info(sqc.ToString(), sqc.GetValues())
+	logQueryStr(&sqc)
 
 	sqc = MakeSelectQueryChain(user).Select("name", "nickname").WhereModel(user, "name")
-	logrus.Info(sqc.ToString(), sqc.GetValues())
+	logQueryStr(&sqc)
 }
 
 func TestInsertQuery(t *testing.T) {
 	var iqc InsertQueryChain
 	user := makeUser()
 	iqc = MakeInsertQueryChain(user).InsertModel(user)
-	logrus.Info(iqc.ToString(), iqc.GetValues())
+	logQueryStr(&iqc)
 
 	iqc = MakeInsertQueryChain(user).InsertManyModel(user, user, user)
-	logrus.Info(iqc.ToString(), iqc.GetValues())
+	logQueryStr(&iqc)
 }
 
 func TestUpdateQuery(t *testing.T) {
 	var uqc UpdateQueryChain
 	user := makeUser()
 	uqc = MakeUpdateQueryChain(user).Set("name", "Robert").Where("id = ?", user.Id)
-	logrus.Info(uqc.ToString(), uqc.GetValues())
+	logQueryStr(&uqc)
 
 	uqc = MakeUpdateQueryChain(user).SetModel(user, "name", "nickname").WhereModel(user)
-	logrus.Info(uqc.ToString(), uqc.GetValues())
+	logQueryStr(&uqc)
 
 	uqc = MakeUpdateQueryChain(user).SetModel(user).WhereKey("id", user.Id)
-	logrus.Info(uqc.ToString(), uqc.GetValues())
+	logQueryStr(&uqc)
 }
 
 func TestDeleteQuery(t *testing.T) {
@@ -80,8 +85,8 @@ func TestDeleteQuery(t *testing.T) {
 
 	user := makeUser()
 	dqc = MakeDeleteQueryChain(user).WhereKey("id", user.Id)
-	logrus.Info(dqc.ToString(), dqc.GetValues())
+	logQueryStr(&dqc)
 
 	dqc = MakeDeleteQueryChain(user).WhereModel(user, "name")
-	logrus.Info(dqc.ToString(), dqc.GetValues())
+	logQueryStr(&dqc)
 }

@@ -98,33 +98,31 @@ func (s *SQLDB) CreateTables(models ...interface{}) {
 }
 
 func (s *SQLDB) createTable(o interface{}) {
-	mmeta := query.MakeModelMetadata(o)
 	q := query.MakeCreateTableQuery(o)
-	if _, err := s.database.Exec(q); err != nil {
+	if _, err := s.database.Exec(q.Qstr); err != nil {
 		switch {
 		case strings.Contains(strings.ToLower(err.Error()), "already exists"):
 			logrus.Warn("CREATE TABLE FAILED: table ",
-				mmeta.Tablename, " already exists in database")
+				q.Tablename, " already exists in database")
 		default:
 			logrus.Panic("unknown error ", err)
 		}
 	} else {
-		logrus.Info("Table ", mmeta.Tablename, " created")
+		logrus.Info("Table ", q.Tablename, " created")
 	}
 }
 
 func (s *SQLDB) dropTable(o interface{}) {
-	mmeta := query.MakeModelMetadata(o)
 	q := query.MakeDropTableQuery(o)
-	if _, err := s.database.Exec(q); err != nil {
+	if _, err := s.database.Exec(q.Qstr); err != nil {
 		switch {
 		case strings.Contains(strings.ToLower(err.Error()), "unknown table"):
 			logrus.Warn("DROP TABLE FAILED: table ",
-				mmeta.Tablename, " doesn't exists in database")
+				q.Tablename, " doesn't exists in database")
 		default:
 			logrus.Panic("DROP TABLE FAILED: unknown error ", err)
 		}
 	} else {
-		logrus.Warn("Table ", mmeta.Tablename, " dropped")
+		logrus.Warn("Table ", q.Tablename, " dropped")
 	}
 }
