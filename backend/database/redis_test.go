@@ -19,7 +19,7 @@ func makeTestRedisDB() *redis.Redis {
 	return redisdb
 }
 
-func TestRedisGetSet(t *testing.T) {
+func TestGetSet(t *testing.T) {
 	redisdb := makeTestRedisDB()
 
 	key := "state"
