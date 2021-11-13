@@ -27,7 +27,7 @@ func main() {
 	router := router.MakeMyRouter()
 	router.Handle("/check", &check.Routes)
 	router.Handle("/sample", &sample.Routes)
-	router.Handle("/auth", &auth.Routes)
+	router.Handle(auth.Endpoint, &auth.Routes)
 
 	router.Serve(8000)
 }

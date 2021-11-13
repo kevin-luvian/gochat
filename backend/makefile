@@ -1,6 +1,9 @@
 build:
 	go build -o bin/server main.go
 
+test:
+	GOFLAGS="-count=1" go test ./...
+
 run: build
 	./bin/server
 
