@@ -26,8 +26,7 @@ func makeTestUserDB(t *testing.T) *libsql.DB {
 }
 
 func checkUserEqual(userA model.User, userB model.User) bool {
-	return userA.Name == userB.Name &&
-		userA.Nickname == userB.Nickname
+	return userA.Equal(userB)
 }
 
 func TestFindAllUser(t *testing.T) {
@@ -49,7 +48,7 @@ func TestCreateUser(t *testing.T) {
 	userDao := MakeUserDAO(db)
 
 	// create new user
-	user := model.User{Name: "Rick", Nickname: "Sanchez"}
+	user := model.User{Name: "Rick", UserID: "Sanchez"}
 	if ok, _ := userDao.Create(user); !ok {
 		t.Fatalf(`can't create new user. ok: %t, user: %v`, ok, user)
 	} else {
@@ -78,7 +77,7 @@ func TestFindUserById(t *testing.T) {
 	userDao := MakeUserDAO(db)
 
 	// create new user
-	modelUser := model.User{Name: "Rick", Nickname: "Sanchez"}
+	modelUser := model.User{Name: "Rick", UserID: "Sanchez"}
 	_, id := userDao.Create(modelUser)
 	logrus.Info("new user created")
 
@@ -105,7 +104,7 @@ func TestDeleteUserById(t *testing.T) {
 	userDao := MakeUserDAO(db)
 
 	// create new user
-	modelUser := model.User{Name: "Rick", Nickname: "Sanchez"}
+	modelUser := model.User{Name: "Rick", UserID: "Sanchez"}
 	ok, id := userDao.Create(modelUser)
 	logrus.Info("new user created")
 
@@ -145,11 +144,11 @@ func TestUpdateUserById(t *testing.T) {
 	userDao := MakeUserDAO(db)
 
 	// create new user. assume user create is functional and passed previous test
-	modelUser := model.User{Name: "Rick", Nickname: "Sanchez"}
+	modelUser := model.User{Name: "Rick", UserID: "Sanchez"}
 	_, id := userDao.Create(modelUser)
 	logrus.Info("new user created")
 
-	modelUserToUpdate := model.User{Name: "Rock", Nickname: "Dwayne"}
+	modelUserToUpdate := model.User{Name: "Rock", UserID: "Dwayne"}
 	ok, updatedUser := userDao.UpdateById(id, modelUserToUpdate)
 	if !ok {
 		t.Fatalf(`user update failed`)
