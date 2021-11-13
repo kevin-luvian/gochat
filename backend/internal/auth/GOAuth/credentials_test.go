@@ -13,10 +13,11 @@ func init() {
 }
 
 func TestCheckCredentialsData(t *testing.T) {
-	log.Println("My Creds ID: ", GetGOAuthConf().ClientID)
-	log.Println("My Creds Secret: ", GetGOAuthConf().ClientSecret)
+	conf := makeDefaultConf()
+	log.Println("My Creds ID: ", conf.ClientID)
+	log.Println("My Creds Secret: ", conf.ClientSecret)
 
-	log.Println("Google OAuth Config: ", GetGOAuthConf())
+	log.Println("Google OAuth Config: ", conf)
 }
 
 func TestCheckLoginCredential(t *testing.T) {
