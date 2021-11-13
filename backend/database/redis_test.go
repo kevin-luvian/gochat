@@ -98,14 +98,14 @@ func TestSetFor(t *testing.T) {
 	redisdb.SETEX(key, 1, value)
 	logrus.Info("set redis key for 1 second")
 
-	time.Sleep(time.Second / 2)
+	time.Sleep(time.Second / 4)
 	if exist := redisdb.EXIST(key); !exist {
 		t.Fatalf(`key not found`)
 	} else {
 		logrus.Info("key found")
 	}
 
-	time.Sleep(time.Second / 2)
+	time.Sleep(time.Second)
 	if exist := redisdb.EXIST(key); exist {
 		t.Fatalf(`key still exist`)
 	} else {
