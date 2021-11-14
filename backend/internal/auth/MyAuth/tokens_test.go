@@ -15,8 +15,10 @@ func init() {
 func TestGenerateTokens(t *testing.T) {
 	userid := "12345"
 
-	if _, err := GenerateAccessToken(userid); err != nil {
+	if tok, err := GenerateAccessToken(userid); err != nil {
 		t.Fatal("cant generate access token. ", err.Error())
+	} else {
+		logrus.Info("Access Token: ", tok)
 	}
 
 	if _, err := GenerateRefreshToken(userid); err != nil {

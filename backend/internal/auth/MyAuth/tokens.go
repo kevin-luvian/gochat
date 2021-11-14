@@ -1,7 +1,6 @@
 package MyAuth
 
 import (
-	"encoding/json"
 	"errors"
 	"os"
 	"time"
@@ -16,61 +15,74 @@ var RefreshTokenSecret = os.Getenv("REFRESH_TOKEN_SECRET")
 type tokenData struct {
 	Authorized bool   `json:"authorized"`
 	UserId     string `json:"user_id"`
-	Exp        int64  `json:"exp"`
+	jwt.StandardClaims
 }
 
-func generateToken(tdata tokenData, secret string) (string, error) {
+func (t tokenData) Valid() error {
+	if t.ExpiresAt < time.Now().Unix() {
+		return errors.New("token has expired")
+	}
+	return nil
+}
+
+func generateToken(claims tokenData, secret string) (string, error) {
+	claims.Issuer = "gochat"
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
 	signkey := []byte(secret)
-	token := jwt.New(jwt.SigningMethodHS256)
-
-	claims := token.Claims.(jwt.MapClaims)
-	dataByte, _ := json.Marshal(tdata)
-	json.Unmarshal(dataByte, &claims)
-
-	tokenString, err := token.SignedString(signkey)
+	signedToken, err := token.SignedString(signkey)
 	if err != nil {
 		logrus.Error("Something Went Wrong: ", err.Error())
 		return "", err
 	}
 
-	return tokenString, nil
+	return signedToken, nil
 }
 
 func parseToken(token string, secret string) (data tokenData, ok bool) {
-	res := tokenData{}
 	signkey := []byte(secret)
-	parsedtoken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New("there was an error in parsing")
-		}
-		return signkey, nil
-	})
+	var claims tokenData
 
-	if err != nil {
+	parsedToken, err := jwt.ParseWithClaims(
+		token,
+		&claims,
+		func(token *jwt.Token) (interface{}, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, errors.New("there was an error in parsing")
+			}
+			return signkey, nil
+		},
+	)
+
+	if err != nil || !parsedToken.Valid || !claims.VerifyIssuer("gochat", true) {
 		logrus.Warn("failed to parse token. ", err.Error())
-		return res, false
+		return tokenData{}, false
 	}
 
-	if m, ok := parsedtoken.Claims.(jwt.MapClaims); ok && parsedtoken.Valid {
-		dataByte, _ := json.Marshal(m)
-		if err := json.Unmarshal(dataByte, &res); err != nil {
-			logrus.Warn("failed to unmarshal, token field is invalid. ", err.Error())
-			return res, false
-		}
-		return res, true
-	}
-	return res, false
+	return claims, true
 }
 
 func GenerateAccessToken(userid string) (string, error) {
 	exp := time.Now().Add(time.Minute * 15) // 15 minutes expiry
-	data := tokenData{false, userid, exp.Unix()}
+	data := tokenData{
+		Authorized: false,
+		UserId:     userid,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: exp.Unix(),
+		},
+	}
 	return generateToken(data, AccessTokenSecret)
 }
 
 func GenerateRefreshToken(userid string) (string, error) {
 	exp := time.Now().Add(time.Hour * 24 * 30) // 30 days expiry
-	data := tokenData{true, userid, exp.Unix()}
+	data := tokenData{
+		Authorized: true,
+		UserId:     userid,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: exp.Unix(),
+		},
+	}
 	return generateToken(data, RefreshTokenSecret)
 }
 
