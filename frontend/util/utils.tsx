@@ -11,3 +11,11 @@ export function cunord<Type>(val: Type | undefined, def: Type): Type {
 export const randstr = (n: number): string => {
   return Math.random().toString(16).substr(2, n);
 };
+
+/**
+ * concat multiple string with blank space
+ * @param s strings
+ */
+export const cat = (...s: string[]): string => {
+  return s.join(" ");
+};

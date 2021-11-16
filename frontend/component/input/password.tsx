@@ -18,7 +18,6 @@ const Password: FC<{
 }> = ({ className, label, value, onChange }) => {
   const [show, setShow] = useState(false);
   const fid = "pfield_" + randstr(25);
-  //   sx={{ m: 1, width: "25ch" }}
 
   return (
     <FormControl className={className} variant="outlined">

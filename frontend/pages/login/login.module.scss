@@ -1,0 +1,11 @@
+@import "../../styles/themes.scss";
+
+.titlebar {
+  font-size: large;
+  width: fit-content;
+}
+
+.gotitle {
+  font-weight: bold;
+  color: $root;
+}
