@@ -4,7 +4,6 @@ import DefaultLayout from "../component/layout/default";
 import { Fragment } from "react";
 import AppPropsDef from "../definition/appProps";
 import { cunord } from "../util/utils";
-import { CIF } from "../component/helper/condition";
 
 function MyApp({ Component, pageProps }: AppPropsDef) {
   const Layout = cunord(Component.layout, DefaultLayout);

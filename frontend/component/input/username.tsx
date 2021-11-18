@@ -4,6 +4,7 @@ import {
   InputAdornment,
   InputLabel,
   OutlinedInput,
+  FormHelperText,
 } from "@mui/material";
 import { Person } from "@mui/icons-material";
 import { FC, useRef } from "react";
@@ -13,14 +14,15 @@ const Username: FC<{
   className?: string;
   label: string;
   value: string;
+  error?: boolean;
   onChange: (val: string) => void;
-}> = ({ className, label, value, onChange }) => {
+}> = ({ className, label, value, error, onChange }) => {
   const fid = "ufield_" + randstr(25);
   const mRef = useRef<{ focus: () => void }>();
   //   sx={{ m: 1, width: "25ch" }}
 
   return (
-    <FormControl className={className} variant="outlined">
+    <FormControl error={error} className={className} variant="outlined">
       <InputLabel htmlFor={fid}>Username</InputLabel>
       <OutlinedInput
         id={fid}
