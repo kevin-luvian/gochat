@@ -1,5 +1,17 @@
 @import "../../styles/themes.scss";
 
+.loginpage {
+  position: absolute;
+  width: 100%;
+  top: 50%;
+  transform: translate(0, -50%);
+}
+
+.card {
+  margin: auto;
+  padding: 5rem;
+}
+
 .titlebar {
   font-size: large;
   width: fit-content;

@@ -1,13 +1,16 @@
-import Wrapper from "../../definition/wrapper";
-import { cat } from "../../util/utils";
-import styles from "./button.module.scss";
-import { Base as RoundedBtn } from "./rounded";
 import { FC } from "react";
+import { Colored, ColorOptions } from "./mui";
+import GoogleIcon from "@mui/icons-material/Google";
+import { MouseEventHandler } from "react-transition-group/node_modules/@types/react";
 
-const GBtn: FC<{ className?: string }> = ({ className = "" }) => (
-  <RoundedBtn className={cat(className, styles.btn_google, "unselectable")}>
-   <img src="/img/google_icon.jpg" /> Login with Google
-  </RoundedBtn>
-);
-
+const GBtn: FC<{ className?: string; onClick?: MouseEventHandler }> = (
+  props
+) => {
+  const color: ColorOptions = { main: "#cf4332", contrastText: "white" };
+  return (
+    <Colored {...props} color={color} startIcon={<GoogleIcon />}>
+      Login with Google
+    </Colored>
+  );
+};
 export default GBtn;

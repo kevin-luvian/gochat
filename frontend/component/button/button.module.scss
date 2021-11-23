@@ -6,10 +6,12 @@ $c_on_primary: map-get($colors, "onPrimary");
 
 .rounded_button {
   font-size: large;
-  font-weight: bold;
+  font-weight: normal;
   cursor: pointer;
   border-radius: 10rem;
-  transition: $fast-transition;
+  padding: 0.5rem;
+  transition: $basic-transition;
+  box-shadow: none;
   &:hover {
     box-shadow: $tight-smooth-shadow;
   }
@@ -25,8 +27,13 @@ $c_on_primary: map-get($colors, "onPrimary");
 
 .btn_google {
   color: white;
-  background-color: red;
+  background-color: #cf4332;
   &:active {
-    background-color: darken(red, 15%);
+    background-color: darken(#cf4332, 15%);
+  }
+
+  img {
+    height: 1.5rem;
+    background-color: transparent;
   }
 }
