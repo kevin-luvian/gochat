@@ -51,4 +51,5 @@ const Home: PageProps = () => {
   );
 };
 
+Home.loginRequired = true;
 export default Home;

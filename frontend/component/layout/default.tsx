@@ -7,7 +7,7 @@ import Image from "next/image";
 const layout: FCLayout = ({ children }) => (
   <Fragment>
     <Head>
-      <title>No Layout</title>
+      <title>Default Layout</title>
       <meta name="description" content="static empty page" />
       <link rel="icon" href="/favicon.ico" />
     </Head>
