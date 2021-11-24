@@ -8,29 +8,39 @@ import {
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { FC, useState } from "react";
+import { useState } from "react";
 import { randstr } from "../../util/utils";
 import { CIF } from "../helper/condition";
+import InputDef from "./definition";
+import { useCallback, useEffect } from "react";
 
-const Password: FC<{
-  className?: string;
-  label: string;
-  value: string;
-  error?: boolean;
-  onChange: (val: string) => void;
-}> = ({ className, label, value, error = false, onChange }) => {
+const Password: InputDef<string> = ({
+  className,
+  label,
+  value,
+  errmsg = "",
+  onChange,
+}) => {
   const [show, setShow] = useState(false);
-  const fid = "pfield_" + randstr(25);
+  let fid = "";
+
+  useEffect(() => {
+    fid = "pfield_" + randstr(25);
+  }, []);
+
+  const handleChange = (val: string) => onChange?.(val.trim());
+
+  const isErr = useCallback(() => errmsg.trim().length > 0, [errmsg]);
 
   return (
-    <FormControl error={error} className={className} variant="outlined">
+    <FormControl error={isErr()} className={className} variant="outlined">
       <InputLabel htmlFor={fid}>Password</InputLabel>
       <OutlinedInput
         id={fid}
         label={label}
         type={show ? "text" : "password"}
         value={value}
-        onChange={(elem) => onChange(elem.target.value)}
+        onChange={(elem) => handleChange(elem.target.value)}
         endAdornment={
           <InputAdornment position="end">
             <IconButton
@@ -44,8 +54,8 @@ const Password: FC<{
           </InputAdornment>
         }
       />
-      <CIF condition={error}>
-        <FormHelperText>username or password is invalid</FormHelperText>
+      <CIF condition={isErr()}>
+        <FormHelperText>{errmsg}</FormHelperText>
       </CIF>
     </FormControl>
   );

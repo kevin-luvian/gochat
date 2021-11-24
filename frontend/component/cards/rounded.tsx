@@ -28,7 +28,7 @@ const Simple: FC<{
     borderStyle: "solid",
     borderWidth: border.width,
     borderRadius: border.radius,
-    borderColor: border.color,
+    borderColor: "transparent",
     boxShadow: "0 0 10px 0 " + border.color,
   };
   return (

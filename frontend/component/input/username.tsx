@@ -4,25 +4,31 @@ import {
   InputAdornment,
   InputLabel,
   OutlinedInput,
-  FormHelperText,
 } from "@mui/material";
 import { Person } from "@mui/icons-material";
-import { FC, useRef } from "react";
+import { useRef } from "react";
 import { randstr } from "../../util/utils";
+import InputDef from "./definition";
+import { useCallback, useEffect } from "react";
 
-const Username: FC<{
-  className?: string;
-  label: string;
-  value: string;
-  error?: boolean;
-  onChange: (val: string) => void;
-}> = ({ className, label, value, error, onChange }) => {
-  const fid = "ufield_" + randstr(25);
+const Username: InputDef<string> = ({
+  className,
+  label,
+  value,
+  errmsg = "",
+  onChange,
+}) => {
   const mRef = useRef<{ focus: () => void }>();
-  //   sx={{ m: 1, width: "25ch" }}
+
+  let fid = "";
+  useEffect(() => {
+    fid = "pfield_" + randstr(25);
+  }, []);
+
+  const isErr = useCallback(() => errmsg.trim().length > 0, [errmsg]);
 
   return (
-    <FormControl error={error} className={className} variant="outlined">
+    <FormControl error={isErr()} className={className} variant="outlined">
       <InputLabel htmlFor={fid}>Username</InputLabel>
       <OutlinedInput
         id={fid}
