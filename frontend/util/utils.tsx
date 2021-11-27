@@ -19,3 +19,24 @@ export const randstr = (n: number): string => {
 export const cat = (...s: string[]): string => {
   return s.join(" ");
 };
+
+/**
+ * get jwt claims data and decode it to JSON.
+ */
+export const parseJWTClaims = (jwt: string) => {
+  const claimsStr = Buffer.from(jwt.split(".")[1], "base64").toString();
+  return JSON.parse(claimsStr);
+};
+
+/**
+ * get jwt expiry in claims as a number.
+ * if expiry doesn't exist, will return 0.
+ */
+export const getJWTExp = (jwt: string): number => {
+  try {
+    const claims = parseJWTClaims(jwt);
+    return claims?.exp || 0;
+  } catch {
+    return 0;
+  }
+};

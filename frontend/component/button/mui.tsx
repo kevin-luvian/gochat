@@ -4,6 +4,16 @@ import { ReactNode } from "react";
 import Wrapper from "../../definition/wrapper";
 import { colors } from "../../styles/themes";
 
+export const Primary: Wrapper = (props) => (
+  <Colored
+    {...props}
+    color={{
+      main: colors.primary,
+      contrastText: colors.onPrimary,
+    }}
+  />
+);
+
 export type ColorOptions = {
   main: string;
   light?: string;
@@ -35,13 +45,3 @@ export const Colored: Wrapper<{ color: ColorOptions; startIcon?: ReactNode }> =
       </ThemeProvider>
     );
   };
-
-export const Primary: Wrapper = (props) => (
-  <Colored
-    {...props}
-    color={{
-      main: colors.primary,
-      contrastText: colors.onPrimary,
-    }}
-  />
-);
