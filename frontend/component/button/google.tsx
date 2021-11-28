@@ -6,7 +6,8 @@ import authRepo from "../../axios/repositories/auth";
 const GBtn: FC<{ className?: string }> = (props) => {
   const handleGLogin = async () => {
     const { oauth_url } = await authRepo.redirectGoogle("/redirect/google");
-    window.location.assign(oauth_url);
+    console.log("OAUTH URL:", oauth_url);
+    // window.location.assign(oauth_url);
   };
 
   const color: ColorOptions = { main: "#cf4332", contrastText: "white" };
