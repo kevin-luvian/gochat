@@ -10,6 +10,9 @@ test:
 run: build
 	./bin/server
 
+lint:
+	golint ./...
+
 watch:
 	ulimit -n 1000
 	reflex -s -r '\.go$$' make run
