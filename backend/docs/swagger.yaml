@@ -1,0 +1,34 @@
+basePath: /api
+definitions:
+  app.Response:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data: {}
+      msg:
+        example: ok
+        type: string
+    type: object
+host: localhost:8000
+info:
+  contact: {}
+  description: This is the core server to manage user accounts and contacts in
+  termsOfService: http://swagger.io/terms/
+  title: GoChat API documentation
+  version: 1.0.0
+paths:
+  /auth/temp:
+    get:
+      description: check for server connection
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: Temporary Handler
+      tags:
+      - auth
+swagger: "2.0"

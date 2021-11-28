@@ -8,4 +8,7 @@ import (
 
 func AuthRoutes(r *gin.RouterGroup) {
 	r.GET("/temp", auth.Temp)
+	r.GET("/login", auth.Temp)
+	r.GET("/login/google", auth.Temp)
+	r.GET("/signup", auth.Temp)
 }

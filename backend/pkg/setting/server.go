@@ -12,7 +12,7 @@ type Server struct {
 	WriteTimeout time.Duration
 }
 
-func setupServer(s *Server) {
+func (s *Server) setup() {
 	if env.IsDevEnv() {
 		s.RunMode = "debug"
 	} else {

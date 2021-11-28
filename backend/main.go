@@ -17,6 +17,14 @@ func init() {
 	setting.Setup()
 }
 
+// @title GoChat API documentation
+// @description This is the core server to manage user accounts and contacts in
+// GOChat application.
+// @version 1.0.0
+// @host localhost:8000
+// @BasePath /api
+// @termsOfService http://swagger.io/terms/
+
 func main() {
 	gin.SetMode(setting.ServerSetting.RunMode)
 	logrus.Info("starting server in ", env.GetStr(env.ENV), " mode...")
