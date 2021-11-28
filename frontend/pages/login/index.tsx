@@ -15,7 +15,6 @@ const Page: PageProps = () => {
   const [password, setPassword] = useState("");
 
   const handleLogin = () => {};
-  const handleGoogleLogin = () => {};
 
   return (
     <div className={styles.background}>
@@ -59,7 +58,7 @@ const Page: PageProps = () => {
             </div>
             <p className="mx-auto my-3 w-fit">{`< OR />`}</p>
             <div className="mt-3 mx-auto w-fit">
-              <BtnGoogle onClick={handleGoogleLogin} />
+              <BtnGoogle />
             </div>
           </Card.Simple>
         </motion.div>

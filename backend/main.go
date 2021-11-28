@@ -1,33 +1,33 @@
 package main
 
 import (
-	"gochat/database"
 	"gochat/env"
-	"gochat/internal/auth"
-	"gochat/internal/check"
-	"gochat/internal/sample"
-	"gochat/model"
-	"gochat/router"
-	"os"
+	"gochat/pkg/setting"
+	"gochat/routers"
+	"net/http"
 
+	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
 
 func init() {
 	env.LoadMainDotEnv()
-	logrus.Info("ENV: ", os.Getenv("ENV"))
+	env.CheckAllVars()
+
+	setting.Setup()
 }
 
 func main() {
-	logrus.Info("Starting Server...")
+	gin.SetMode(setting.ServerSetting.RunMode)
+	logrus.Info("starting server in ", env.GetStr(env.ENV), " mode...")
 
-	db := database.GetMYSQLDB()
-	db.CreateTables(model.User{})
+	router := routers.InitRouter()
+	endPoint := setting.ServerSetting.EndPoint
 
-	router := router.MakeMyRouter()
-	router.Handle("/check", &check.Routes)
-	router.Handle("/sample", &sample.Routes)
-	router.Handle(auth.Endpoint, &auth.Routes)
-
-	router.Serve(8000)
+	server := &http.Server{
+		Addr:    endPoint,
+		Handler: router,
+	}
+	logrus.Info("start http server listening ", endPoint)
+	server.ListenAndServe()
 }
