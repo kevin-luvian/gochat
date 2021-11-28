@@ -1,16 +1,16 @@
-package err
+package errc
 
 var ErrMessages = map[int]string{
-	SUCCESS: "ok",
-	ERROR:   "error",
+	Success: "ok",
+	Error:   "error",
 
-	ERROR_CODE_UNDEFINED: "unknown error",
+	ErrorCodeUndefined: "unknown error",
 }
 
 func GetMsg(code int) string {
 	if msg, ok := ErrMessages[code]; ok {
 		return msg
 	} else {
-		return ErrMessages[ERROR_CODE_UNDEFINED]
+		return ErrMessages[ErrorCodeUndefined]
 	}
 }

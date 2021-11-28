@@ -24,6 +24,51 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/auth/login/google": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Create google oauth redirect",
+                "parameters": [
+                    {
+                        "description": "login google request",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.LoginGoogleReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/auth.LoginGoogleRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/app.VErr"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/temp": {
             "get": {
                 "description": "check for server connection",
@@ -36,27 +81,52 @@ var doc = `{
                 "summary": "Temporary Handler",
                 "responses": {
                     "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
+                        "description": "OK"
                     }
                 }
             }
         }
     },
     "definitions": {
-        "app.Response": {
+        "app.ErrResponse": {
             "type": "object",
             "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 200
-                },
-                "data": {},
                 "msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "app.VErr": {
+            "type": "object",
+            "properties": {
+                "field": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.LoginGoogleReq": {
+            "type": "object",
+            "properties": {
+                "redirect_url": {
                     "type": "string",
-                    "example": "ok"
+                    "example": "http://localhost:3000/redirect/google"
+                }
+            }
+        },
+        "auth.LoginGoogleRes": {
+            "type": "object",
+            "properties": {
+                "oauth_url": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "string"
                 }
             }
         }

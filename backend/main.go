@@ -36,6 +36,7 @@ func main() {
 		Addr:    endPoint,
 		Handler: router,
 	}
-	logrus.Info("start http server listening ", endPoint)
+
+	logrus.Info("server listening on ", endPoint)
 	server.ListenAndServe()
 }
