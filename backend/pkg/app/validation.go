@@ -9,6 +9,25 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+var validatorsFn = []struct {
+	Tag string
+	VFn validator.Func
+}{
+	{
+		Tag: "nestr",
+		VFn: func(fl validator.FieldLevel) bool {
+			return strings.TrimSpace(fl.Field().String()) != ""
+		},
+	},
+	{
+		Tag: "validurl",
+		VFn: func(fl validator.FieldLevel) bool {
+			_, err := url.ParseRequestURI(fl.Field().String())
+			return err == nil
+		},
+	},
+}
+
 func makeValidator() *validator.Validate {
 	v := validator.New()
 	v.RegisterTagNameFunc(func(fld reflect.StructField) string {
@@ -51,25 +70,4 @@ func parseValidationErrors(Errors validator.ValidationErrors) []VErr {
 		})
 	}
 	return verrs
-}
-
-type vValidator struct {
-	Tag string
-	VFn validator.Func
-}
-
-var validatorsFn = []vValidator{
-	{
-		Tag: "nestr",
-		VFn: func(fl validator.FieldLevel) bool {
-			return strings.TrimSpace(fl.Field().String()) != ""
-		},
-	},
-	{
-		Tag: "validurl",
-		VFn: func(fl validator.FieldLevel) bool {
-			_, err := url.ParseRequestURI(fl.Field().String())
-			return err == nil
-		},
-	},
 }

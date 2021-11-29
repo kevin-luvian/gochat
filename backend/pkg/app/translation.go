@@ -7,6 +7,13 @@ import (
 	en_translations "github.com/go-playground/validator/v10/translations/en"
 )
 
+var VTranslations = []VTranslation{
+	defaultVTranslation("required", "{0} must have a value!"),
+	defaultVTranslation("nestr", "{0} must not be an empty string!"),
+	defaultVTranslation("passwd", "{0} password is not strong enough!"),
+	defaultVTranslation("validurl", "{0} must be a valid url"),
+}
+
 func makeTranslator(v *validator.Validate) ut.Translator {
 	en := en.New()
 	uni := ut.New(en, en)
@@ -35,11 +42,4 @@ func defaultVTranslation(tag, msg string) VTranslation {
 			return t
 		},
 	}
-}
-
-var VTranslations = []VTranslation{
-	defaultVTranslation("required", "{0} must have a value!"),
-	defaultVTranslation("nestr", "{0} must not be an empty string!"),
-	defaultVTranslation("passwd", "{0} password is not strong enough!"),
-	defaultVTranslation("validurl", "{0} must be a valid url"),
 }
