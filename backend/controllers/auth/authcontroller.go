@@ -25,7 +25,7 @@ func Temp(c *gin.Context) {
 }
 
 type LoginGoogleReq struct {
-	RedirectUrl string `json:"redirect_url" validate:"validurl" example:"http://localhost:3000/redirect/google"`
+	RedirectUrl string `json:"redirect_url" validate:"validurl" example:"http://localhost:8000/auth/google"`
 }
 
 type LoginGoogleRes struct {

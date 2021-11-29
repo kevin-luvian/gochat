@@ -23,9 +23,12 @@ func TestValidUrl(t *testing.T) {
 		t.Fatal("valid url is invalid. ", verrs)
 	}
 
-	rBody.RUrl = ""
-	if verrs := ValidateStruct(vl, rBody); len(verrs) == 0 {
-		t.Fatal("invalid url is valid. ", verrs)
+	invalidUrls := []string{"", "localhost::3000"}
+	for _, url := range invalidUrls {
+		rBody.RUrl = url
+		if verrs := ValidateStruct(vl, rBody); len(verrs) == 0 {
+			t.Fatal("invalid url is valid. ", url)
+		}
 	}
 }
 

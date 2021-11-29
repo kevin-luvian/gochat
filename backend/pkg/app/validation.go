@@ -22,8 +22,19 @@ var validatorsFn = []struct {
 	{
 		Tag: "validurl",
 		VFn: func(fl validator.FieldLevel) bool {
-			_, err := url.ParseRequestURI(fl.Field().String())
-			return err == nil
+			fUrl := fl.Field().String()
+
+			_, err := url.ParseRequestURI(fUrl)
+			if err != nil {
+				return false
+			}
+
+			u, err := url.Parse(fUrl)
+			if err != nil || u.Scheme == "" || u.Host == "" {
+				return false
+			}
+
+			return true
 		},
 	},
 }

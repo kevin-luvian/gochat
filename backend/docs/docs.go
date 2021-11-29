@@ -112,7 +112,7 @@ var doc = `{
             "properties": {
                 "redirect_url": {
                     "type": "string",
-                    "example": "http://localhost:3000/redirect/google"
+                    "example": "http://localhost:8000/auth/google"
                 }
             }
         },

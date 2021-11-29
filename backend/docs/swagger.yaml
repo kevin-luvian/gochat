@@ -21,7 +21,7 @@ definitions:
   auth.LoginGoogleReq:
     properties:
       redirect_url:
-        example: http://localhost:3000/redirect/google
+        example: http://localhost:8000/auth/google
         type: string
     type: object
   auth.LoginGoogleRes:
