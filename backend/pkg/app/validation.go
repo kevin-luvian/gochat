@@ -1,6 +1,7 @@
 package app
 
 import (
+	"net/url"
 	"reflect"
 	"strings"
 
@@ -24,6 +25,14 @@ func makeValidator() *validator.Validate {
 		}
 	}
 	return v
+}
+
+func ValidateStruct(v *validator.Validate, o interface{}) []VErr {
+	err := v.Struct(o)
+	if err != nil {
+		return parseValidationErrors(err.(validator.ValidationErrors))
+	}
+	return []VErr{}
 }
 
 type VErr struct {
@@ -54,6 +63,13 @@ var validatorsFn = []vValidator{
 		Tag: "nestr",
 		VFn: func(fl validator.FieldLevel) bool {
 			return strings.TrimSpace(fl.Field().String()) != ""
+		},
+	},
+	{
+		Tag: "validurl",
+		VFn: func(fl validator.FieldLevel) bool {
+			_, err := url.ParseRequestURI(fl.Field().String())
+			return err == nil
 		},
 	},
 }

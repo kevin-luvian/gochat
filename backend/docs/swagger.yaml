@@ -1,10 +1,5 @@
 basePath: /api
 definitions:
-  app.ErrResponse:
-    properties:
-      msg:
-        type: string
-    type: object
   app.VErr:
     properties:
       field:
@@ -12,6 +7,15 @@ definitions:
       message:
         type: string
       value:
+        type: string
+    type: object
+  app.ValidationError:
+    properties:
+      errors:
+        items:
+          $ref: '#/definitions/app.VErr'
+        type: array
+      message:
         type: string
     type: object
   auth.LoginGoogleReq:
@@ -54,13 +58,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            items:
-              $ref: '#/definitions/app.VErr'
-            type: array
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/app.ErrResponse'
+            $ref: '#/definitions/app.ValidationError'
       summary: Create google oauth redirect
       tags:
       - auth

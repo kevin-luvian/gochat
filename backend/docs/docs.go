@@ -54,16 +54,7 @@ var doc = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/app.VErr"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/app.ErrResponse"
+                            "$ref": "#/definitions/app.ValidationError"
                         }
                     }
                 }
@@ -88,14 +79,6 @@ var doc = `{
         }
     },
     "definitions": {
-        "app.ErrResponse": {
-            "type": "object",
-            "properties": {
-                "msg": {
-                    "type": "string"
-                }
-            }
-        },
         "app.VErr": {
             "type": "object",
             "properties": {
@@ -106,6 +89,20 @@ var doc = `{
                     "type": "string"
                 },
                 "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "app.ValidationError": {
+            "type": "object",
+            "properties": {
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/app.VErr"
+                    }
+                },
+                "message": {
                     "type": "string"
                 }
             }

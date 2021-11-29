@@ -3,8 +3,9 @@ package auth
 import (
 	"gochat/controllers/auth/google"
 	"gochat/pkg/app"
+	"gochat/pkg/db"
 	"gochat/pkg/errc"
-	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,7 +25,7 @@ func Temp(c *gin.Context) {
 }
 
 type LoginGoogleReq struct {
-	RedirectUrl string `json:"redirect_url" validate:"nestr" example:"http://localhost:3000/redirect/google"`
+	RedirectUrl string `json:"redirect_url" validate:"validurl" example:"http://localhost:3000/redirect/google"`
 }
 
 type LoginGoogleRes struct {
@@ -37,22 +38,19 @@ type LoginGoogleRes struct {
 // @Summary Create google oauth redirect
 // @Param data body LoginGoogleReq true "login google request"
 // @Success 200 {object} LoginGoogleRes
-// @Failure 400 {array} app.VErr
-// @Failure 500 {object} app.ErrResponse
+// @Failure 400 {object} app.ValidationError
 // @Router /auth/login/google [post]
 func LoginGoogle(c *gin.Context) {
 	gapp := app.Gin{C: c}
 	var form LoginGoogleReq
 
-	errCode, vErr := gapp.BindAndValid(&form)
-	if errCode == errc.FailedValidation {
-		gapp.Response(http.StatusBadRequest, vErr)
-		return
-	} else if errCode != errc.Success {
-		gapp.ErrResponse(http.StatusInternalServerError, errCode)
+	if errCode := gapp.BindAndValid(&form); errCode != errc.Success {
 		return
 	}
 
-	state, url := google.MakeLoginRedirect(form.RedirectUrl)
+	redirectUrl := strings.TrimSpace(form.RedirectUrl)
+	state, url := google.MakeLoginRedirect(redirectUrl)
+	tenMinutes := 60 * 10
+	db.GetRedis().SETEX(state, tenMinutes, "")
 	gapp.OkResponse(LoginGoogleRes{url, state})
 }

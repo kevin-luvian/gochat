@@ -39,6 +39,7 @@ func defaultVTranslation(tag, msg string) VTranslation {
 
 var VTranslations = []VTranslation{
 	defaultVTranslation("required", "{0} must have a value!"),
-	defaultVTranslation("nestr", "{0} must not be empty!"),
+	defaultVTranslation("nestr", "{0} must not be an empty string!"),
 	defaultVTranslation("passwd", "{0} password is not strong enough!"),
+	defaultVTranslation("validurl", "{0} must be a valid url"),
 }

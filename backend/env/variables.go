@@ -52,7 +52,10 @@ func GetStr(key string) string {
 
 func GetInt(key string) int {
 	if val, ok := os.LookupEnv(key); ok {
-		i, _ := strconv.ParseInt(val, 10, 0)
+		i, err := strconv.ParseInt(val, 10, 0)
+		if err != nil {
+			logrus.Panic("Cant read env ", key, " as int.")
+		}
 		return int(i)
 	}
 	logrus.Panic("Cant read env ", key)
@@ -90,4 +93,19 @@ func CheckAllVars() {
 		}
 	}
 	logrus.Info("all ENV variables are defined")
+
+	CheckIntVars()
+}
+
+func CheckIntVars() {
+	intVars := []string{
+		SERVER_READ_TIMEOUT,
+		SERVER_WRITE_TIMEOUT,
+		DB_MYSQL_PORT,
+		DB_MYSQL_TEST_PORT,
+		DB_REDIS_DEV_PORT,
+	}
+	for _, v := range intVars {
+		GetInt(v)
+	}
 }
