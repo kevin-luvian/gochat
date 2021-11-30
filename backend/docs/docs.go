@@ -24,7 +24,7 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/auth/login/google": {
+        "/api/auth/login/google": {
             "post": {
                 "produces": [
                     "application/json"
@@ -60,7 +60,7 @@ var doc = `{
                 }
             }
         },
-        "/auth/temp": {
+        "/api/auth/temp": {
             "get": {
                 "description": "check for server connection",
                 "produces": [
@@ -83,10 +83,12 @@ var doc = `{
             "type": "object",
             "properties": {
                 "field": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "input_field"
                 },
                 "message": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "input_field must have a value!"
                 },
                 "value": {
                     "type": "string"
@@ -103,7 +105,8 @@ var doc = `{
                     }
                 },
                 "message": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "invalid request parameters"
                 }
             }
         },
@@ -120,10 +123,12 @@ var doc = `{
             "type": "object",
             "properties": {
                 "oauth_url": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "https://accounts.google.com/o/oauth2/auth?..."
                 },
                 "state": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "GoogleAuthCredential_12345"
                 }
             }
         }
@@ -143,10 +148,10 @@ type swaggerInfo struct {
 var SwaggerInfo = swaggerInfo{
 	Version:     "1.0.0",
 	Host:        "localhost:8000",
-	BasePath:    "/api",
+	BasePath:    "",
 	Schemes:     []string{},
 	Title:       "GoChat API documentation",
-	Description: "This is the core server to manage user accounts and contacts in",
+	Description: "This is the core server for GoChat to manage accounts and contacts.",
 }
 
 type s struct{}

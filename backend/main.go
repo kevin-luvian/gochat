@@ -2,6 +2,7 @@ package main
 
 import (
 	"gochat/env"
+	"gochat/pkg/db"
 	"gochat/pkg/setting"
 	"gochat/routers"
 	"net/http"
@@ -15,14 +16,13 @@ func init() {
 	env.CheckAllVars()
 
 	setting.Setup()
+	db.Setup()
 }
 
 // @title GoChat API documentation
-// @description This is the core server to manage user accounts and contacts in
-// GOChat application.
+// @description This is the core server for GoChat to manage accounts and contacts.
 // @version 1.0.0
 // @host localhost:8000
-// @BasePath /api
 // @termsOfService http://swagger.io/terms/
 
 func main() {

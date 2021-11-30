@@ -66,9 +66,9 @@ func ValidateStruct(v *validator.Validate, o interface{}) []VErr {
 }
 
 type VErr struct {
-	Field   string `json:"field"`
-	Message string `json:"message"`
-	Value   string `json:"value"`
+	Field   string `json:"field" example:"input_field"`
+	Message string `json:"message" example:"input_field must have a value!"`
+	Value   string `json:"value" example:""`
 }
 
 func parseValidationErrors(Errors validator.ValidationErrors) []VErr {

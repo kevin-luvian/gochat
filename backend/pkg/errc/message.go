@@ -4,7 +4,7 @@ var ErrMessages = map[int]string{
 	Success: "ok",
 	Error:   "error",
 
-	InvalidParams:      "request parameter is not valid",
+	InvalidParams:      "invalid request parameters",
 	ErrorCodeUndefined: "unknown error",
 }
 

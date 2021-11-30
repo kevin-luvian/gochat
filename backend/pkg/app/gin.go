@@ -41,25 +41,25 @@ func (app *Gin) Response(httpCode int, data interface{}) {
 }
 
 type ValidationError struct {
-	Msg  string `json:"message"`
+	Msg  string `json:"message" example:"invalid request parameters"`
 	Errs []VErr `json:"errors"`
 }
 
 func (app *Gin) BindAndValid(form interface{}) (errCode int) {
-	err := app.C.Bind(form)
-	if err != nil {
-		app.Response(http.StatusNotAcceptable, ValidationError{
+	bindErr := app.C.ShouldBind(form)
+	verrs := ValidateStruct(validate, form)
+	if len(verrs) > 0 {
+		app.Response(http.StatusBadRequest, ValidationError{
 			Msg:  errc.GetMsg(errc.InvalidParams),
-			Errs: []VErr{},
+			Errs: verrs,
 		})
 		return errc.InvalidParams
 	}
 
-	verrs := ValidateStruct(validate, form)
-	if len(verrs) > 0 {
-		app.Response(http.StatusNotAcceptable, ValidationError{
+	if bindErr != nil {
+		app.Response(http.StatusBadRequest, ValidationError{
 			Msg:  errc.GetMsg(errc.InvalidParams),
-			Errs: verrs,
+			Errs: []VErr{},
 		})
 		return errc.InvalidParams
 	}

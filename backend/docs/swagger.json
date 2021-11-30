@@ -1,16 +1,15 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This is the core server to manage user accounts and contacts in",
+        "description": "This is the core server for GoChat to manage accounts and contacts.",
         "title": "GoChat API documentation",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {},
         "version": "1.0.0"
     },
     "host": "localhost:8000",
-    "basePath": "/api",
     "paths": {
-        "/auth/login/google": {
+        "/api/auth/login/google": {
             "post": {
                 "produces": [
                     "application/json"
@@ -46,7 +45,7 @@
                 }
             }
         },
-        "/auth/temp": {
+        "/api/auth/temp": {
             "get": {
                 "description": "check for server connection",
                 "produces": [
@@ -69,10 +68,12 @@
             "type": "object",
             "properties": {
                 "field": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "input_field"
                 },
                 "message": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "input_field must have a value!"
                 },
                 "value": {
                     "type": "string"
@@ -89,7 +90,8 @@
                     }
                 },
                 "message": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "invalid request parameters"
                 }
             }
         },
@@ -106,10 +108,12 @@
             "type": "object",
             "properties": {
                 "oauth_url": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "https://accounts.google.com/o/oauth2/auth?..."
                 },
                 "state": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "GoogleAuthCredential_12345"
                 }
             }
         }

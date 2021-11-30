@@ -1,10 +1,11 @@
-basePath: /api
 definitions:
   app.VErr:
     properties:
       field:
+        example: input_field
         type: string
       message:
+        example: input_field must have a value!
         type: string
       value:
         type: string
@@ -16,6 +17,7 @@ definitions:
           $ref: '#/definitions/app.VErr'
         type: array
       message:
+        example: invalid request parameters
         type: string
     type: object
   auth.LoginGoogleReq:
@@ -27,19 +29,21 @@ definitions:
   auth.LoginGoogleRes:
     properties:
       oauth_url:
+        example: https://accounts.google.com/o/oauth2/auth?...
         type: string
       state:
+        example: GoogleAuthCredential_12345
         type: string
     type: object
 host: localhost:8000
 info:
   contact: {}
-  description: This is the core server to manage user accounts and contacts in
+  description: This is the core server for GoChat to manage accounts and contacts.
   termsOfService: http://swagger.io/terms/
   title: GoChat API documentation
   version: 1.0.0
 paths:
-  /auth/login/google:
+  /api/auth/login/google:
     post:
       parameters:
       - description: login google request
@@ -62,7 +66,7 @@ paths:
       summary: Create google oauth redirect
       tags:
       - auth
-  /auth/temp:
+  /api/auth/temp:
     get:
       description: check for server connection
       produces:

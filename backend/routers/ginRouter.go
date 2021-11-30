@@ -1,8 +1,8 @@
 package routers
 
 import (
+	"gochat/pkg/docs"
 	"gochat/routers/api"
-	"gochat/routers/swagger"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -13,7 +13,13 @@ func InitRouter() *gin.Engine {
 	r.Use(gin.Recovery())
 	r.Use(makeCORS())
 
-	swagger.SwaggerRoute(r.Group("/swagger"))
+	{
+		rdocs := r.Group("/docs")
+		rdocs.Static("/static", "./docs")
+		rdocs.GET("/rapidoc", docs.Rapidoc("/docs/static"))
+		rdocs.GET("/redoc", docs.Redoc("/docs/static"))
+		rdocs.GET("/swagger", docs.Swagger("/docs/static"))
+	}
 
 	{
 		apis := r.Group("/api")

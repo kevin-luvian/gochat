@@ -30,6 +30,10 @@ func MakeRedisDB(network string, url string) Redis {
 	}
 }
 
+func (r *Redis) TESTCONN() {
+	r.pool.Dial()
+}
+
 func (r *Redis) FLUSH() {
 	_, err := doOnce(r, "FLUSHALL")
 	if err != nil {

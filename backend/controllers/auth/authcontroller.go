@@ -5,6 +5,7 @@ import (
 	"gochat/pkg/app"
 	"gochat/pkg/db"
 	"gochat/pkg/errc"
+	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -18,10 +19,9 @@ import (
 // @Tags auth
 // @Produce json
 // @Success 200 {object} nil
-// @Router /auth/temp [get]
+// @Router /api/auth/temp [get]
 func Temp(c *gin.Context) {
-	ag := app.Gin{C: c}
-	ag.OkResponse(nil)
+	c.Status(http.StatusOK)
 }
 
 type LoginGoogleReq struct {
@@ -29,8 +29,8 @@ type LoginGoogleReq struct {
 }
 
 type LoginGoogleRes struct {
-	OAuthUrl string `json:"oauth_url"`
-	State    string `json:"state"`
+	OAuthUrl string `json:"oauth_url" example:"https://accounts.google.com/o/oauth2/auth?..."`
+	State    string `json:"state" example:"GoogleAuthCredential_12345"`
 }
 
 // @Tags auth
@@ -39,7 +39,7 @@ type LoginGoogleRes struct {
 // @Param data body LoginGoogleReq true "login google request"
 // @Success 200 {object} LoginGoogleRes
 // @Failure 400 {object} app.ValidationError
-// @Router /auth/login/google [post]
+// @Router /api/auth/login/google [post]
 func LoginGoogle(c *gin.Context) {
 	gapp := app.Gin{C: c}
 	var form LoginGoogleReq
