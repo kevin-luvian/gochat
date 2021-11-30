@@ -1,0 +1,37 @@
+.doc-header {
+  background-color: #1b1b1b;
+  padding: 1.2rem;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.unselectable {
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.doc-button {
+  cursor: pointer;
+  border-radius: 1rem;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #85d4db;
+  background-color: transparent;
+  width: fit-content;
+  padding: 0.4rem 1rem;
+  color: white;
+  transition: all 0.2s ease-in-out;
+}
+
+.doc-button:hover {
+  border-color: #77dce5;
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+    0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+}
+
+.doc-button:active {
+  background-color: #52bac4;
+}
