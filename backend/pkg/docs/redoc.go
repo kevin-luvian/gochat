@@ -53,7 +53,6 @@ const redocTemplate = `
     </style>
   </head>
   <body>
-  	<h1> my new top bar </h1>
     <redoc spec-url='{{ .SpecURL }}'></redoc>
     <script src='{{ .RedocURL }}'> </script>
   </body>
