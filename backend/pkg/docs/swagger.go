@@ -50,7 +50,7 @@ type SwaggerConfig struct {
 func (s *SwaggerConfig) ToDefault(basePath string) {
 	s.Title = "GoChat Interactive API Documentation"
 	s.DeepLinking = true
-	s.DocExpansion = "full" // list, full, none
+	s.DocExpansion = "list" // list, full, none
 	s.DefaultModelsExpandDepth = 1
 	s.Oauth2RedirectURL = template.JS(
 		"`${window.location.protocol}//${window.location.host}$" +
@@ -89,13 +89,22 @@ const swagger_index_templ = `<!-- HTML for static distribution bundle build -->
       background: #fafafa;
     }
   </style>
+  <script type="text/javascript">
+  function redirectTo(endpoint) {
+	const baseUrl = window.location.protocol+"//"+window.location.host;
+	const currPath = window.location.pathname.split('/');
+	const docPath = currPath.slice(0, currPath.length - 1).join('/');
+	const targetUrl = baseUrl+docPath+"/"+endpoint; 
+	window.location.replace(targetUrl);
+  }
+  </script>
 </head>
 
 <body>
 <div class="doc-header">
   <div class="doc-button unselectable">swagger</div>
-  <div class="doc-button unselectable">redoc</div>
-  <div class="doc-button unselectable">rapidoc</div>
+  <div class="doc-button unselectable" onclick="redirectTo('redoc')">redoc</div>
+  <div class="doc-button unselectable" onclick="redirectTo('rapidoc')">rapidoc</div>
 </div>
 <div id="swagger-ui"></div>
 
