@@ -1,43 +1,12 @@
 package app
 
 import (
-	"net/url"
 	"reflect"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/sirupsen/logrus"
 )
-
-var validatorsFn = []struct {
-	Tag string
-	VFn validator.Func
-}{
-	{
-		Tag: "nestr",
-		VFn: func(fl validator.FieldLevel) bool {
-			return strings.TrimSpace(fl.Field().String()) != ""
-		},
-	},
-	{
-		Tag: "validurl",
-		VFn: func(fl validator.FieldLevel) bool {
-			fUrl := fl.Field().String()
-
-			_, err := url.ParseRequestURI(fUrl)
-			if err != nil {
-				return false
-			}
-
-			u, err := url.Parse(fUrl)
-			if err != nil || u.Scheme == "" || u.Host == "" {
-				return false
-			}
-
-			return true
-		},
-	},
-}
 
 func makeValidator() *validator.Validate {
 	v := validator.New()
@@ -48,7 +17,7 @@ func makeValidator() *validator.Validate {
 		}
 		return name
 	})
-	for _, vfn := range validatorsFn {
+	for _, vfn := range validators {
 		err := v.RegisterValidation(vfn.Tag, vfn.VFn)
 		if err != nil {
 			logrus.Error(err)
@@ -68,7 +37,6 @@ func ValidateStruct(v *validator.Validate, o interface{}) []VErr {
 type VErr struct {
 	Field   string `json:"field" example:"input_field"`
 	Message string `json:"message" example:"input_field must have a value!"`
-	Value   string `json:"value" example:""`
 }
 
 func parseValidationErrors(Errors validator.ValidationErrors) []VErr {
@@ -76,7 +44,6 @@ func parseValidationErrors(Errors validator.ValidationErrors) []VErr {
 	for _, err := range Errors {
 		verrs = append(verrs, VErr{
 			Field:   err.Field(),
-			Value:   err.Param(),
 			Message: err.Translate(trans),
 		})
 	}

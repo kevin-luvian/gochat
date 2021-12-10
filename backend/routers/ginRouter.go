@@ -20,11 +20,7 @@ func InitRouter() *gin.Engine {
 		rdocs.GET("/redoc", docs.Redoc("/docs/static"))
 		rdocs.GET("/swagger", docs.Swagger("/docs/static"))
 	}
-
-	{
-		apis := r.Group("/api")
-		api.AuthRoutes(apis.Group("/auth"))
-	}
+	api.Routes(r.Group("/api"))
 	return r
 }
 

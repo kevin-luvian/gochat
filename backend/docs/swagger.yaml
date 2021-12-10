@@ -1,4 +1,10 @@
 definitions:
+  app.ErrResponse:
+    properties:
+      msg:
+        example: an error has occured
+        type: string
+    type: object
   app.VErr:
     properties:
       field:
@@ -6,8 +12,6 @@ definitions:
         type: string
       message:
         example: input_field must have a value!
-        type: string
-      value:
         type: string
     type: object
   app.ValidationError:
@@ -33,6 +37,25 @@ definitions:
         type: string
       state:
         example: GoogleAuthCredential_12345
+        type: string
+    type: object
+  auth.SignupReq:
+    properties:
+      email:
+        example: abc@def.gh
+        type: string
+      password:
+        example: pass1234
+        type: string
+      username:
+        example: rick
+        type: string
+    type: object
+  auth.TokenRes:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
         type: string
     type: object
 host: localhost:8000
@@ -64,6 +87,31 @@ paths:
           schema:
             $ref: '#/definitions/app.ValidationError'
       summary: Create google oauth redirect
+      tags:
+      - auth
+  /api/auth/signup:
+    post:
+      parameters:
+      - description: create new user
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/auth.SignupReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.TokenRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/app.ValidationError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.ErrResponse'
+      summary: Create new user account
       tags:
       - auth
   /api/auth/temp:

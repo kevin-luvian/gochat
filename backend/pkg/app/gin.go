@@ -25,7 +25,11 @@ type Gin struct {
 }
 
 type ErrResponse struct {
-	Msg string `json:"msg"`
+	Msg string `json:"msg" example:"an error has occured"`
+}
+
+func (app *Gin) AppErrResponse(msg string) {
+	app.C.JSON(500, ErrResponse{msg})
 }
 
 func (app *Gin) ErrResponse(httpCode, errcCode int) {

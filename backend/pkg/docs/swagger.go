@@ -65,6 +65,10 @@ const swagger_index_templ = `<!-- HTML for static distribution bundle build -->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+  <meta http-equiv="Pragma" content="no-cache"/>
+  <meta http-equiv="Expires" content="0"/>
+
   <title>{{.Title}}</title>
   <link href='{{.FontsCSS}}' rel='stylesheet' />
   <link rel='stylesheet' type='text/css' href='{{.MYDOCCSS}}' />

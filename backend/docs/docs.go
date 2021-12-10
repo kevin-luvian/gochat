@@ -60,6 +60,45 @@ var doc = `{
                 }
             }
         },
+        "/api/auth/signup": {
+            "post": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Create new user account",
+                "parameters": [
+                    {
+                        "description": "create new user",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.SignupReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/auth.TokenRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/app.ValidationError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/auth/temp": {
             "get": {
                 "description": "check for server connection",
@@ -79,6 +118,15 @@ var doc = `{
         }
     },
     "definitions": {
+        "app.ErrResponse": {
+            "type": "object",
+            "properties": {
+                "msg": {
+                    "type": "string",
+                    "example": "an error has occured"
+                }
+            }
+        },
         "app.VErr": {
             "type": "object",
             "properties": {
@@ -89,9 +137,6 @@ var doc = `{
                 "message": {
                     "type": "string",
                     "example": "input_field must have a value!"
-                },
-                "value": {
-                    "type": "string"
                 }
             }
         },
@@ -129,6 +174,34 @@ var doc = `{
                 "state": {
                     "type": "string",
                     "example": "GoogleAuthCredential_12345"
+                }
+            }
+        },
+        "auth.SignupReq": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "abc@def.gh"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "pass1234"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "rick"
+                }
+            }
+        },
+        "auth.TokenRes": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "type": "string"
                 }
             }
         }

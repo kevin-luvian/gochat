@@ -10,9 +10,14 @@ test:
 run: build
 	./bin/server
 
+run_swag: swagger build run
+
 lint:
 	golint ./...
 
+swagger:
+	./swag init
+
 watch:
 	ulimit -n 1000
-	reflex -s -r '\.go$$' make run
+	reflex -s -R '^docs/' -r '\.go$$' make run

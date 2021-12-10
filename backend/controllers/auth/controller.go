@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"gochat/controllers/auth/MyAuth"
 	"gochat/controllers/auth/google"
 	"gochat/pkg/app"
 	"gochat/pkg/db"
@@ -9,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 // @BasePath /api/auth
@@ -22,15 +24,6 @@ import (
 // @Router /api/auth/temp [get]
 func Temp(c *gin.Context) {
 	c.Status(http.StatusOK)
-}
-
-type LoginGoogleReq struct {
-	RedirectUrl string `json:"redirect_url" validate:"validurl" example:"http://localhost:8000/auth/google"`
-}
-
-type LoginGoogleRes struct {
-	OAuthUrl string `json:"oauth_url" example:"https://accounts.google.com/o/oauth2/auth?..."`
-	State    string `json:"state" example:"GoogleAuthCredential_12345"`
 }
 
 // @Tags auth
@@ -53,4 +46,34 @@ func LoginGoogle(c *gin.Context) {
 	tenMinutes := 60 * 10
 	db.GetRedis().SETEX(state, tenMinutes, "")
 	gapp.OkResponse(LoginGoogleRes{url, state})
+}
+
+// @Tags auth
+// @Summary Create new user account
+// @Param data body SignupReq true "create new user"
+// @Success 200 {object} TokenRes
+// @Failure 400 {object} app.ValidationError
+// @Failure 500 {object} app.ErrResponse
+// @Router /api/auth/signup [post]
+func Signup(c *gin.Context) {
+	gapp := app.Gin{C: c}
+	var form SignupReq
+	logrus.Info("Signing up")
+
+	if errCode := gapp.BindAndValid(&form); errCode != errc.Success {
+		return
+	}
+
+	// username := form.Username
+	// password := form.Password
+	// email := form.Email
+	// state, url := google.MakeLoginRedirect(redirectUrl)
+	accTok, erra := MyAuth.GenerateAccessToken("abc")
+	refTok, errf := MyAuth.GenerateRefreshToken("abc")
+	if erra != nil || errf != nil {
+		gapp.AppErrResponse("failed to generate token")
+		return
+	}
+
+	gapp.OkResponse(TokenRes{AccessToken: accTok, RefreshToken: refTok})
 }
