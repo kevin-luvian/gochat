@@ -1,17 +1,16 @@
-package db
+package redis
 
 import (
 	"fmt"
 	"sync"
 
 	"gochat/env"
-	"gochat/pkg/db/redis"
 )
 
 var redisonce sync.Once
-var redisInstance *redis.Redis
+var redisInstance *Redis
 
-func GetRedis() *redis.Redis {
+func GetRedis() *Redis {
 	if redisInstance == nil {
 		redisonce.Do(makeRedisInstance)
 	}
@@ -19,7 +18,7 @@ func GetRedis() *redis.Redis {
 }
 
 func makeRedisInstance() {
-	redisDB := redis.MakeRedisDB("tcp", getRedisAddress())
+	redisDB := MakeRedisDB("tcp", getRedisAddress())
 	redisInstance = &redisDB
 }
 

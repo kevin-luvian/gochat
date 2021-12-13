@@ -42,6 +42,10 @@ func IsDevEnv() bool {
 	return GetStr(ENV) == "development"
 }
 
+func IsTestEnv() bool {
+	return GetStr(ENV) == "test"
+}
+
 func GetStr(key string) string {
 	if val, ok := os.LookupEnv(key); ok {
 		return val

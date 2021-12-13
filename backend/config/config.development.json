@@ -1,0 +1,7 @@
+{
+  "DB_USERNAME": "gouser",
+  "DB_PASSWORD": "gopassword",
+  "DB_PORT": 3300,
+  "DB_HOST": "127.0.0.1",
+  "DB_NAME": "gomysql"
+}

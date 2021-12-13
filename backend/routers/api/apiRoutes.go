@@ -1,7 +1,7 @@
 package api
 
 import (
-	"gochat/controllers/auth"
+	"gochat/internal/auth"
 
 	"github.com/gin-gonic/gin"
 )

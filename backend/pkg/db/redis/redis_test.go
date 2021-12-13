@@ -1,8 +1,7 @@
-package db
+package redis
 
 import (
 	"gochat/env"
-	"gochat/pkg/db/redis"
 	"testing"
 	"time"
 )
@@ -11,7 +10,7 @@ func init() {
 	env.LoadDotEnvForTest()
 }
 
-func makeTestRedisDB() *redis.Redis {
+func makeTestRedisDB() *Redis {
 	redisdb := GetRedis()
 	redisdb.FLUSH()
 	return redisdb

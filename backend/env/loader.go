@@ -32,4 +32,5 @@ func LoadDotEnvForTest() {
 	filePath := strings.TrimRight(path.Dir(filename), "/env")
 
 	loadEnv(filePath + "/.env")
+	os.Setenv(ENV, "test")
 }

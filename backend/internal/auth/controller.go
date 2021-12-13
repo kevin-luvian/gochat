@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"gochat/controllers/auth/MyAuth"
-	"gochat/controllers/auth/google"
+	"gochat/internal/auth/MyAuth"
+	"gochat/internal/auth/google"
 	"gochat/pkg/app"
 	"gochat/pkg/db"
 	"gochat/pkg/errc"
