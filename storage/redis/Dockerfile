@@ -1,4 +1,4 @@
-FROM redis:latest
+FROM arm64v8/redis
 
 VOLUME /redis/data
 

@@ -1,4 +1,4 @@
-FROM mysql:latest
+FROM arm64v8/mysql:oracle
 
 ENV MYSQL_DATABASE gomysqltest
 ENV MYSQL_USER gouser

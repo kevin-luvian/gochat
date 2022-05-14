@@ -6,15 +6,15 @@ services:
     # restart: unless-stopped
     build: ./storage/mysql
     ports:
-      - 3300:3306
+      - 7001:3306
   mysql_db_test:
     container_name: "go_mysql_test"
     build: ./storage/mysql/test
     ports:
-      - 3301:3306
+      - 7002:3306
   redis:
     container_name: "go_redis"
     build: ./storage/redis
     ports:
-      - 3302:6379
+      - 7003:6379
   
