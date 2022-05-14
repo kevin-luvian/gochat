@@ -38,5 +38,8 @@ func main() {
 	}
 
 	logrus.Info("server listening on ", endPoint)
-	server.ListenAndServe()
+
+	if err := server.ListenAndServe(); err != nil {
+		logrus.Error(err)
+	}
 }
