@@ -22,7 +22,7 @@ func init() {
 // @title GoChat API documentation
 // @description This is the core server for GoChat to manage accounts and contacts.
 // @version 1.0.0
-// @host localhost:8000
+// @host localhost:7000
 // @termsOfService http://swagger.io/terms/
 
 func main() {

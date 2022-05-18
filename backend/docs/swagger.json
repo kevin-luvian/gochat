@@ -7,7 +7,7 @@
         "contact": {},
         "version": "1.0.0"
     },
-    "host": "localhost:8000",
+    "host": "localhost:7000",
     "paths": {
         "/api/auth/login/google": {
             "post": {

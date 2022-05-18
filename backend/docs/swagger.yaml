@@ -58,7 +58,7 @@ definitions:
       refresh_token:
         type: string
     type: object
-host: localhost:8000
+host: localhost:7000
 info:
   contact: {}
   description: This is the core server for GoChat to manage accounts and contacts.
