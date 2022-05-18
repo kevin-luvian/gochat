@@ -16,7 +16,7 @@ lint:
 	golint ./...
 
 swagger:
-	./swag init
+	swag init
 
 watch:
 	ulimit -n 1000
