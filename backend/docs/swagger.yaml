@@ -125,4 +125,15 @@ paths:
       summary: Temporary Handler
       tags:
       - auth
+  /api/user/temp:
+    get:
+      description: test REST on User
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Temporary Handler
+      tags:
+      - user
 swagger: "2.0"
